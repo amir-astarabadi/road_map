@@ -1,0 +1,55 @@
+services:
+
+  nginx:
+    build:
+      context: "./services/nginx"
+      dockerfile: Dockerfile
+    container_name: test_me_nginx
+    ports:
+     - 80:80
+    volumes:
+     - ${API_PWD}:/var/www/html 
+    networks:
+      - test_me_network
+    depends_on:
+      - php
+
+  php:
+    build: 
+      context: "./services/php"
+      dockerfile: Dockerfile
+    container_name: test_me_php
+    volumes:
+     - ${API_PWD}:/var/www/html
+    networks:
+      - test_me_network
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:8.1.0
+    container_name: test_me_mysql
+    ports:
+      - 3307:3306
+    volumes:
+      - ${SERVICES_PWD}/mysql/volume_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=test_me
+    networks:
+      - test_me_network
+
+  redis:
+    image: redis:alpine3.19
+    container_name: test_me_redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ${SERVICES_PWD}/redis/volume_data:/usr/local/etc/redis
+    networks:
+      - test_me_network
+
+networks:
+  test_me_network:
+    driver: bridge
