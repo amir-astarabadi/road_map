@@ -7,7 +7,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Modules\Authentication\Models\User;
 use Tests\TestCase;
 
-class LoginTest extends TestCase
+class LoginControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -23,7 +23,7 @@ class LoginTest extends TestCase
 
     public function test_happy_path()
     {
-        $response = $this->post(route('login'), $this->credentials);
+        $response = $this->postJson(route('login'), $this->credentials);
 
         $response->assertStatus(200);
         $response->assertJson(
@@ -34,14 +34,14 @@ class LoginTest extends TestCase
             }
         );
 
-        $response = $this->withHeader('Authorization', "Bearer " . $response->json('data.authentication_token'))->get(route('test-auth'));
+        $response = $this->withHeader('Authorization', "Bearer " . $response->json('data.authentication_token'))->getJson(route('test-auth'));
         $response->assertStatus(200);
     }
 
     public function test_can_not_login_with_invalid_credentials()
     {
         $this->credentials['password'] = 'invalid password';
-        $response = $this->post(route('login'), $this->credentials);
+        $response = $this->postJson(route('login'), $this->credentials);
 
         $response->assertStatus(401);
         $response->assertJson(
@@ -55,10 +55,10 @@ class LoginTest extends TestCase
 
     public function test_can_not_use_routes_with_invalid_token()
     {
-        $response = $this->withHeader('Authorization', "Bearer jebrish")->get(route('test-auth'));
-        $response->assertStatus(302);
+        $response = $this->withHeader('Authorization', "Bearer jebrish")->getJson(route('test-auth'));
+        $response->assertStatus(401);
 
-        $response = $this->get(route('test-auth'));
-        $response->assertStatus(302);
+        $response = $this->getJson(route('test-auth'));
+        $response->assertStatus(401);
     }
 }
