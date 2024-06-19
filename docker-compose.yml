@@ -1,0 +1,30 @@
+services:
+
+  nginx:
+    build:
+      context: "./services/nginx"
+      dockerfile: Dockerfile
+    container_name: guide_me_nginx
+    ports:
+     - 80:80
+    volumes:
+     - .:/var/www/html 
+    networks:
+      - guide_me
+    depends_on:
+      - php
+
+  php:
+    build: 
+      context: "./services/php"
+      dockerfile: Dockerfile
+    container_name: guide_me_php
+    volumes:
+     - .:/var/www/html
+    networks:
+      - guide_me
+    ports:
+      - 8080:8080
+networks:
+  guide_me:
+    driver: bridge
