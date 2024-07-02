@@ -1,10 +1,10 @@
 FROM nginx:stable-alpine
 
-ENV NGINX_USER=test_me
-ENV NGINX_GROUP=test_me
+ENV NGINX_USER=road_map
+ENV NGINX_GROUP=road_map
 
 RUN mkdir -p /var/www/html/public
-RUN mkdir -p /var/log/nginx/test_me
+RUN mkdir -p /var/log/nginx/road_map
 
 COPY default.conf /etc/nginx/conf.d/default.conf
 

@@ -2,29 +2,54 @@ services:
 
   nginx:
     build:
-      context: "./services/nginx"
+      context: "./docker/services/nginx"
       dockerfile: Dockerfile
-    container_name: guide_me_nginx
+    container_name: road_map_nginx
     ports:
      - 80:80
     volumes:
-     - .:/var/www/html 
+     - ${API_PWD}:/var/www/html 
     networks:
-      - guide_me
+      - road_map_network
     depends_on:
       - php
 
   php:
     build: 
-      context: "./services/php"
+      context: "./docker/services/php"
       dockerfile: Dockerfile
-    container_name: guide_me_php
+    container_name: road_map_php
     volumes:
-     - .:/var/www/html
+     - ${API_PWD}:/var/www/html
     networks:
-      - guide_me
+      - road_map_network
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:8.1.0
+    container_name: road_map_mysql
     ports:
-      - 8080:8080
+      - 3307:3306
+    volumes:
+      - ${SERVICES_PWD}/mysql/volume_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=test_me
+    networks:
+      - road_map_network
+
+  redis:
+    image: redis:alpine3.19
+    container_name: road_map_redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ${SERVICES_PWD}/redis/volume_data:/usr/local/etc/redis
+    networks:
+      - road_map_network
+
 networks:
-  guide_me:
+  road_map_network:
     driver: bridge

@@ -10,6 +10,19 @@ use Modules\Authentication\Requests\RegisterRequest;
 
 class RegisterController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     tags={"auth", "register"},
+     *     summary="Register user",
+     *     description="it is clear, isn't it?",
+     *     operationId="register",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     )
+     * )
+     */
     public function register(RegisterRequest $request)
     {
         $user = User::create($request->validated());

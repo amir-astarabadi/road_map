@@ -1,7 +1,7 @@
 FROM php:8.1-fpm-alpine
 
-ENV PHP_USER=test_me
-ENV PHP_GROUP=test_me
+ENV PHP_USER=road_map
+ENV PHP_GROUP=road_map
 
 RUN apk add --no-cache \
     autoconf \
