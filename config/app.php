@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 use Modules\Authentication\Providers\AuthenticationServiceProvider;
+use Modules\RoadMap\Providers\RoadMapServiceProvider;
 
 return [
 
@@ -172,7 +173,8 @@ return [
 
 
         // Modules Providers
-        AuthenticationServiceProvider::class
+        AuthenticationServiceProvider::class,
+        RoadMapServiceProvider::class,
     ])->toArray(),
 
     /*
