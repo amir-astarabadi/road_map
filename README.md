@@ -2,12 +2,15 @@
 * sudo apt install nginx
 * sudo apt install php-zip php-curl
 * sudo apt install mysql-server
-* sudo mysql
-* ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY base env';
+    * sudo mysql
+    * ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY base env';
 * git clone git@github.com:amir-astarabadi/road_map.git
 * composer install
 * make .env and set variables
 * import database 
+* sudo apt install redis-server
+    * set supervised to systemd
+
 
 * nginx config
 ```
