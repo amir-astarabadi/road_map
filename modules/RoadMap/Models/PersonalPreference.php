@@ -84,24 +84,43 @@ class PersonalPreference extends Model
 
     public function updateStatus()
     {
-        // from last status related field check and update status
-        if (!is_null($this->jobs)) {
-            return $this->status = PersonalPreferencesProcessStatus::FINISH;
+        
+        if(filled($this->budget)){
+            $this->status = PersonalPreferencesProcessStatus::COURSE_LENGTH;
+        }else{
+            $this->status = PersonalPreferencesProcessStatus::BUDGET;
+            return;
         }
-        if (!is_null($this->industries)) {
-            return $this->status = PersonalPreferencesProcessStatus::JOBS;
+        
+        if(filled($this->course_length_type)){
+            $this->status = PersonalPreferencesProcessStatus::COURSE_LOCATION;
+        }else{
+            $this->status = PersonalPreferencesProcessStatus::COURSE_LENGTH;
+            return;
         }
-        if (!is_null($this->course_location_type)) {
-            return $this->status = PersonalPreferencesProcessStatus::INDUSTRIES;
-        }
-        if (!is_null($this->course_length_type)) {
-            return $this->status = PersonalPreferencesProcessStatus::COURSE_LOCATION;
-        }
-        if (!is_null($this->budget)) {
-            return $this->status = PersonalPreferencesProcessStatus::COURSE_LENGTH;
+        
+        if (filled($this->course_location_type)) {
+            $this->status = PersonalPreferencesProcessStatus::INDUSTRIES;
+        }else{
+            $this->status = PersonalPreferencesProcessStatus::COURSE_LOCATION;
+            return;
         }
 
-        // if none of last conditions became trun it means its first update and first item right now is budget
-        return $this->status = PersonalPreferencesProcessStatus::BUDGET;
+        if (filled($this->industries)) {
+            $this->status = PersonalPreferencesProcessStatus::JOBS;
+        }else{
+            $this->status = PersonalPreferencesProcessStatus::INDUSTRIES;
+            return;
+        }
+
+        if (filled($this->jobs)) {
+            $this->status = PersonalPreferencesProcessStatus::FINISH;
+            return;
+        }else{
+            $this->status = PersonalPreferencesProcessStatus::JOBS;
+            return;
+        }
+
+        $this->status = PersonalPreferencesProcessStatus::BUDGET;
     }
 }
