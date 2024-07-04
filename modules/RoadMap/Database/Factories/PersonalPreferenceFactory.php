@@ -4,6 +4,8 @@ namespace Modules\RoadMap\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Authentication\Models\User;
+use Modules\RoadMap\Enums\CourseLength;
+use Modules\RoadMap\Enums\CourseLocation;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
 use Modules\RoadMap\Models\PersonalPreference;
 
@@ -39,8 +41,14 @@ class PersonalPreferenceFactory extends Factory
 
     public function inStatus(string $status)
     {
-        return $this->state([
-            'status' => $status
-        ]);
+        $inputs = [
+            'budget' => !in_array($status, [PersonalPreferencesProcessStatus::START])  ? 150 : null,
+            'course_length_type' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET])  ? CourseLength::LONG_TERM : null,
+            'course_location_type' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET, PersonalPreferencesProcessStatus::COURSE_LENGTH]) ? CourseLocation::ONLINE : null,
+            'industries' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET, PersonalPreferencesProcessStatus::COURSE_LENGTH,PersonalPreferencesProcessStatus::COURSE_LOCATION ]) ? ['i1, i2'] : null,
+            'jobs' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET, PersonalPreferencesProcessStatus::COURSE_LENGTH,PersonalPreferencesProcessStatus::COURSE_LOCATION, PersonalPreferencesProcessStatus::INDUSTRIES ]) ? ['j1, j2'] : null,
+            'status' => $status,
+        ];
+        return $this->state($inputs);
     }
 }

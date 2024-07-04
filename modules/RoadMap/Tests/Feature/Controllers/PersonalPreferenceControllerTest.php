@@ -2,10 +2,8 @@
 
 namespace Modules\RoadMap\Tests\Feature\Controllers;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Enums\CourseLength;
@@ -60,11 +58,11 @@ class PersonalPreferenceControllerTest extends TestCase
         ]);
 
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs){
+            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
                 $assertableJson
                     ->has('data.id')
                     ->where('data.status', PersonalPreferencesProcessStatus::COURSE_LOCATION)
-                    ->where('data.budget', null)
+                    ->where('data.budget', $personalPreference->budget)
                     ->where('data.course_length_type', $inputs['course_length'])
                     ->where('data.course_location_type', null)
                     ->where('data.industries', null)
@@ -78,7 +76,7 @@ class PersonalPreferenceControllerTest extends TestCase
     public function test_fill_course_location()
     {
         $inputs = ['course_location' => CourseLocation::ONLINE];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::COURSE_LOCATION)->create();
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::COURSE_LENGTH)->create();
         $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
 
         $response->assertStatus(Response::HTTP_OK);
@@ -89,12 +87,12 @@ class PersonalPreferenceControllerTest extends TestCase
         ]);
 
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs){
+            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
                 $assertableJson
                     ->has('data.id')
                     ->where('data.status', PersonalPreferencesProcessStatus::INDUSTRIES)
-                    ->where('data.budget', null)
-                    ->where('data.course_length_type', null)
+                    ->where('data.budget', $personalPreference->budget)
+                    ->where('data.course_length_type', $personalPreference->course_length_type)
                     ->where('data.course_location_type', $inputs['course_location'])
                     ->where('data.industries', null)
                     ->where('data.jobs', null)
@@ -106,7 +104,7 @@ class PersonalPreferenceControllerTest extends TestCase
     public function test_fill_industries()
     {
         $inputs = ['intrested_industries' => ['it', 'that']];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::INDUSTRIES)->create();
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::COURSE_LOCATION)->create();
         $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
 
         $response->assertStatus(Response::HTTP_OK);
@@ -118,13 +116,13 @@ class PersonalPreferenceControllerTest extends TestCase
         $this->assertSame($inputs['intrested_industries'], $personalPreference->refresh()->industries);
 
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs){
+            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
                 $assertableJson
                     ->has('data.id')
                     ->where('data.status', PersonalPreferencesProcessStatus::JOBS)
-                    ->where('data.budget', null)
-                    ->where('data.course_length_type', null)
-                    ->where('data.course_location_type', null)
+                    ->where('data.budget', $personalPreference->budget)
+                    ->where('data.course_length_type', $personalPreference->course_length_type)
+                    ->where('data.course_location_type', $personalPreference->course_location_type)
                     ->where('data.industries', $inputs['intrested_industries'])
                     ->where('data.jobs', null)
                     ->etc();
@@ -135,7 +133,7 @@ class PersonalPreferenceControllerTest extends TestCase
     public function test_fill_jobs()
     {
         $inputs = ['intrested_jobs' => ['it', 'that']];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::JOBS)->create();
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::INDUSTRIES)->create();
         $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
 
         $response->assertStatus(Response::HTTP_OK);
@@ -147,14 +145,14 @@ class PersonalPreferenceControllerTest extends TestCase
         $this->assertSame($inputs['intrested_jobs'], $personalPreference->refresh()->jobs);
 
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs){
+            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
                 $assertableJson
                     ->has('data.id')
                     ->where('data.status', PersonalPreferencesProcessStatus::FINISH)
-                    ->where('data.budget', null)
-                    ->where('data.course_length_type', null)
-                    ->where('data.course_location_type', null)
-                    ->where('data.industries', null)
+                    ->where('data.budget', $personalPreference->budget)
+                    ->where('data.course_length_type', $personalPreference->course_length_type)
+                    ->where('data.course_location_type', $personalPreference->course_location_type)
+                    ->where('data.industries', $personalPreference->industries)
                     ->where('data.jobs', $inputs['intrested_jobs'])
                     ->etc();
             }
