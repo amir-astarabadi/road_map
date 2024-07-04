@@ -17,12 +17,12 @@ class LoginController extends Controller
         ]);
 
         $user = User::whereEmail(request()->get('email'))->first();
-        if(!$user || !Hash::check(request()->get('password'), $user->password)){
+        if (!$user || !Hash::check(request()->get('password'), $user->password)) {
             return response()->json(['errors' => ['invalid credentials']], Response::HTTP_UNAUTHORIZED);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        
+
         return response()->json([
             'data' => ['authentication_token' => $token]
         ]);
