@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Authentication\Database\Factories\UserFactory;
+use Modules\Authentication\Enums\Sex;
 
 class User extends Authenticatable
 {
@@ -20,9 +21,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'sex',
         'email',
         'password',
+        'birth_date',
     ];
 
     /**
@@ -43,6 +47,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'birth_date' => 'date',
+        'sex' => Sex::class
     ];
 
     protected static function newFactory(): UserFactory

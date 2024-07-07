@@ -16,12 +16,13 @@ class PersonalPreferenceResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'career' => $this->resource->career_id,
             'status' => $this->resource->status,
             'budget' => $this->resource->budget,
-            'course_length_type' => $this->resource->course_length_type,
-            'course_location_type' => $this->resource->course_location_type,
-            'industries' => $this->resource->industries,
-            'jobs' => $this->resource->jobs,
+            'work_experience' => $this->resource->work_experience,
+            'course_format' => $this->resource->course_format,
+            'need_degree' => $this->resource->need_degree,
+            'duration' => $this->resource->duration,
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace Modules\Authentication\Tests\Feature\Controllers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Modules\Authentication\Enums\Sex;
 use Modules\Authentication\Models\User;
 use Tests\TestCase;
 
@@ -18,8 +19,11 @@ class RegisterControllerTest extends TestCase
     {
         parent::setUp();
         $this->credentials = [
+            'first_name' =>'amir',
+            'last_name' =>'pourastarabadi',
+            'sex' =>Sex::MALE->value,
+            'birth_date' => now()->subYears(20),
             'email' => 'me@g.com',
-            'name' => 'John Dou',
             'password' => 'password',
             'password_confirmation' => 'password'
         ];

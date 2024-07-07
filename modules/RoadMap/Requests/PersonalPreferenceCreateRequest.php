@@ -13,7 +13,7 @@ class PersonalPreferenceCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        abort_if(PersonalPreference::isOpen()->blongToUser(auth()->user())->exists(), Response::HTTP_FORBIDDEN, trans('open_form', ['number' => 1, 'form_name' => 'Personal Preference']));
+        abort_if(PersonalPreference::isOpen()->belongsToUser(auth()->user())->exists(), Response::HTTP_FORBIDDEN, trans('open_form', ['number' => 1, 'form_name' => 'Personal Preference']));
         return true;
     }
 

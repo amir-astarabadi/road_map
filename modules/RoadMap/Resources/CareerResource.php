@@ -15,9 +15,9 @@ class CareerResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->resource['id'],
-            'title' => $this->resource['title'],
-            'category' => $this->resource['category'],
+            'id' => $this->resource->id,
+            'title' => $this->resource->title,
+            'category' => $this->resource->category,
         ];
     }
 }

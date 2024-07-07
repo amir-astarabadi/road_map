@@ -7,8 +7,12 @@ use Illuminate\Http\Response;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Enums\CourseLength;
-use Modules\RoadMap\Enums\CourseLocation;
-use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
+use Modules\RoadMap\Enums\CourseFormat;
+use Modules\RoadMap\Enums\Duration;
+use Modules\RoadMap\Enums\NeedDegree;
+use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus as Status;
+use Modules\RoadMap\Enums\WorkExperience;
+use Modules\RoadMap\Models\Career;
 use Modules\RoadMap\Models\PersonalPreference;
 use Tests\TestCase;
 
@@ -24,138 +28,173 @@ class PersonalPreferenceControllerTest extends TestCase
         $this->authUser = User::factory()->create();
     }
 
+    public function test_index_method()
+    {
+        PersonalPreference::factory(2)->forUser($this->authUser)->create();
+
+        $response = $this->actingAs($this->authUser)->getJson(route('personal-preference.index'));
+
+        $this->assertCount(2, $response->json('data'));
+    }
+
+
+    public function test_show_method()
+    {
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(Status::FINISH->value)->create();
+
+        $response = $this->actingAs($this->authUser)->getJson(route('personal-preference.show', ['personal_preference' => $personalPreference->getKey()]));
+
+        $response->assertJson(
+            fn (AssertableJson $response) =>
+            $response->where('data.id', $personalPreference->getKey())
+                ->where('data.career', $personalPreference->career_id)
+                ->where('data.status', $personalPreference->status)
+                ->where('data.budget', $personalPreference->budget)
+                ->where('data.work_experience', $personalPreference->work_experience->value)
+                ->where('data.course_format', $personalPreference->course_format)
+                ->where('data.need_degree', $personalPreference->need_degree)
+                ->where('data.duration', $personalPreference->duration)
+                ->etc()
+        );
+    }
+
+
+    public function test_fill_career()
+    {
+        $inputs = ['intrested_career' => Career::factory()->create()->getKey()];
+        $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update'), $inputs);
+        $this->assertDatabaseHas('personal_preferences', ['user_id' => $this->authUser->getKey(), 'status' => Status::BUDGET->value]);
+
+        $response->assertJson(
+            fn (AssertableJson $assertableJson) =>
+            $assertableJson
+                ->has('data.id')
+                ->where('data.status', Status::BUDGET->value)
+                ->where('data.career', $inputs['intrested_career'])
+                ->etc()
+        );
+    }
+
     public function test_fill_budget_amount()
     {
-        $response = $this->actingAs($this->authUser)->postJson(route('personal-preference.store'));
-        $response->assertStatus(Response::HTTP_CREATED);
-        $this->assertDatabaseHas('personal_preferences', ['user_id' => $this->authUser->getKey(), 'status' => PersonalPreferencesProcessStatus::START]);
+        $inputs = ['budget_amout' => ['min' => 10, 'max' => 1000]];
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(Status::BUDGET->value)->create();
+        $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertDatabaseHas('personal_preferences', ['user_id' => $this->authUser->getKey(), 'status' => Status::WORK_EXPERIENCE->value]);
         $response->assertJson(
-            function (AssertableJson $assertableJson) {
-                $assertableJson
-                    ->has('data.id')
-                    ->where('data.status', PersonalPreferencesProcessStatus::START)
-                    ->where('data.budget', null)
-                    ->where('data.course_length_type', null)
-                    ->where('data.course_location_type', null)
-                    ->where('data.industries', null)
-                    ->where('data.jobs', null)
-                    ->etc();
-            }
+            fn (AssertableJson $assertableJson) =>
+            $assertableJson
+                ->has('data.id')
+                ->where('data.status', Status::WORK_EXPERIENCE->value)
+                ->where('data.career', $personalPreference->career_id)
+                ->where('data.budget', $inputs['budget_amout'])
+                ->etc()
         );
     }
 
-    public function test_fill_course_lenght()
+    public function test_fill_work_experience()
     {
-        $inputs = ['course_length' => CourseLength::SHORT_TERM];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::COURSE_LENGTH)->create();
+        $inputs = ['work_experience' => WorkExperience::TWO_TO_FIVE->value];
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(Status::WORK_EXPERIENCE->value)->create();
         $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
 
         $response->assertStatus(Response::HTTP_OK);
         $this->assertDatabaseHas('personal_preferences', [
             'user_id' => $this->authUser->getKey(),
-            'status' => PersonalPreferencesProcessStatus::COURSE_LOCATION,
-            'course_length_type' => $inputs['course_length']
+            'status' => Status::COURSE_FORMAT->value,
+            'work_experience' => $inputs['work_experience']
         ]);
 
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
-                $assertableJson
-                    ->has('data.id')
-                    ->where('data.status', PersonalPreferencesProcessStatus::COURSE_LOCATION)
-                    ->where('data.budget', $personalPreference->budget)
-                    ->where('data.course_length_type', $inputs['course_length'])
-                    ->where('data.course_location_type', null)
-                    ->where('data.industries', null)
-                    ->where('data.jobs', null)
-                    ->etc();
-            }
+            fn (AssertableJson $assertableJson) =>
+            $assertableJson
+                ->has('data.id')
+                ->where('data.status', Status::COURSE_FORMAT->value)
+                ->where('data.career', $personalPreference->career_id)
+                ->where('data.budget', $personalPreference->budget)
+                ->where('data.work_experience', $inputs['work_experience'])
+                ->etc()
         );
     }
 
-
-    public function test_fill_course_location()
+    public function test_fill_course_format()
     {
-        $inputs = ['course_location' => CourseLocation::ONLINE];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::COURSE_LENGTH)->create();
+        $inputs = ['course_format' => CourseFormat::HYBRIDE->value];
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(Status::COURSE_FORMAT->value)->create();
         $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
 
         $response->assertStatus(Response::HTTP_OK);
         $this->assertDatabaseHas('personal_preferences', [
             'user_id' => $this->authUser->getKey(),
-            'status' => PersonalPreferencesProcessStatus::INDUSTRIES,
-            'course_location_type' => $inputs['course_location']
+            'status' => Status::DEGREE->value,
+            'course_format' => $inputs['course_format']
         ]);
 
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
-                $assertableJson
-                    ->has('data.id')
-                    ->where('data.status', PersonalPreferencesProcessStatus::INDUSTRIES)
-                    ->where('data.budget', $personalPreference->budget)
-                    ->where('data.course_length_type', $personalPreference->course_length_type)
-                    ->where('data.course_location_type', $inputs['course_location'])
-                    ->where('data.industries', null)
-                    ->where('data.jobs', null)
-                    ->etc();
-            }
+            fn (AssertableJson $assertableJson) =>
+            $assertableJson
+                ->has('data.id')
+                ->where('data.status', Status::DEGREE->value)
+                ->where('data.career', $personalPreference->career_id)
+                ->where('data.budget', $personalPreference->budget)
+                ->where('data.work_experience', $personalPreference->work_experience->value)
+                ->where('data.course_format', $inputs['course_format'])
+                ->etc()
         );
     }
 
-    public function test_fill_industries()
+    public function test_fill_need_degree()
     {
-        $inputs = ['intrested_industries' => ['it', 'that']];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::COURSE_LOCATION)->create();
+        $inputs = ['need_degree' => NeedDegree::NOT_SURE->value];
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(Status::DEGREE->value)->create();
+        $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertDatabaseHas('personal_preferences', [
+            'user_id' => $this->authUser->getKey(),
+            'status' => Status::DURATION->value,
+            'need_degree' => $inputs['need_degree'],
+        ]);
+
+        $response->assertJson(
+            fn (AssertableJson $assertableJson) =>
+            $assertableJson
+                ->has('data.id')
+                ->where('data.status', Status::DURATION->value)
+                ->where('data.career', $personalPreference->career_id)
+                ->where('data.budget', $personalPreference->budget)
+                ->where('data.work_experience', $personalPreference->work_experience->value)
+                ->where('data.course_format', $personalPreference->course_format)
+                ->where('data.need_degree', $inputs['need_degree'])
+                ->etc()
+        );
+    }
+
+    public function test_fill_duration()
+    {
+        $inputs = ['duration' => Duration::LESS_THAN_3_MOUNTH->value];
+        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(Status::DURATION->value)->create();
         $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
 
         $response->assertStatus(Response::HTTP_OK);
         $this->assertDatabaseHas('personal_preferences', [
             'user_id' => $this->authUser->getKey(),
-            'status' => PersonalPreferencesProcessStatus::JOBS,
+            'status' => Status::FINISH->value,
+            'duration' => $inputs['duration'],
         ]);
 
-        $this->assertSame($inputs['intrested_industries'], $personalPreference->refresh()->industries);
-
         $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
-                $assertableJson
-                    ->has('data.id')
-                    ->where('data.status', PersonalPreferencesProcessStatus::JOBS)
-                    ->where('data.budget', $personalPreference->budget)
-                    ->where('data.course_length_type', $personalPreference->course_length_type)
-                    ->where('data.course_location_type', $personalPreference->course_location_type)
-                    ->where('data.industries', $inputs['intrested_industries'])
-                    ->where('data.jobs', null)
-                    ->etc();
-            }
-        );
-    }
-
-    public function test_fill_jobs()
-    {
-        $inputs = ['intrested_jobs' => ['it', 'that']];
-        $personalPreference = PersonalPreference::factory()->forUser($this->authUser)->inStatus(PersonalPreferencesProcessStatus::INDUSTRIES)->create();
-        $response = $this->actingAs($this->authUser)->putJson(route('personal-preference.update', ['personal_preference' => $personalPreference->getKey()]), $inputs);
-
-        $response->assertStatus(Response::HTTP_OK);
-        $this->assertDatabaseHas('personal_preferences', [
-            'user_id' => $this->authUser->getKey(),
-            'status' => PersonalPreferencesProcessStatus::FINISH,
-        ]);
-
-        $this->assertSame($inputs['intrested_jobs'], $personalPreference->refresh()->jobs);
-
-        $response->assertJson(
-            function (AssertableJson $assertableJson) use($inputs, $personalPreference){
-                $assertableJson
-                    ->has('data.id')
-                    ->where('data.status', PersonalPreferencesProcessStatus::FINISH)
-                    ->where('data.budget', $personalPreference->budget)
-                    ->where('data.course_length_type', $personalPreference->course_length_type)
-                    ->where('data.course_location_type', $personalPreference->course_location_type)
-                    ->where('data.industries', $personalPreference->industries)
-                    ->where('data.jobs', $inputs['intrested_jobs'])
-                    ->etc();
-            }
+            fn (AssertableJson $assertableJson) =>
+            $assertableJson
+                ->has('data.id')
+                ->where('data.status', Status::FINISH->value)
+                ->where('data.career', $personalPreference->career_id)
+                ->where('data.budget', $personalPreference->budget)
+                ->where('data.work_experience', $personalPreference->work_experience->value)
+                ->where('data.course_format', $personalPreference->course_format)
+                ->where('data.need_degree', $personalPreference->need_degree)
+                ->where('data.duration', $inputs['duration'])
+                ->etc()
         );
     }
 }

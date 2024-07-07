@@ -4,17 +4,19 @@ namespace Modules\RoadMap\Enums;
 
 enum PersonalPreferencesProcessStatus :string
 {
-    const START = 'start';
+    case START = 'start';
 
-    const BUDGET = 'budget';
+    case CAREER = 'career';
+    
+    case BUDGET = 'budget';
 
-    const COURSE_LENGTH = 'course_length';
+    case WORK_EXPERIENCE = 'work_experience';
 
-    const COURSE_LOCATION = 'course_location';
+    case COURSE_FORMAT = 'course_format';
+    
+    case DEGREE = 'degree';
 
-    const INDUSTRIES = 'industries';
+    case DURATION = 'duration';
 
-    const JOBS = 'jobs';
-
-    const FINISH = 'finish';
+    case FINISH = 'finish';
 }

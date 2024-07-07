@@ -5,7 +5,8 @@ use Modules\RoadMap\Controllers\CareerController;
 use Modules\RoadMap\Controllers\PersonalPreferenceController;
 
 Route::middleware('auth:sanctum')->group(function(){
-    Route::apiResource('personal-preference', PersonalPreferenceController::class);
-    Route::apiResource('carrers', CareerController::class)->only(['index']);
+    Route::apiResource('personal-preference', PersonalPreferenceController::class)->except('update');
+    Route::put('personal-preference/{personal_preference?}', [PersonalPreferenceController::class, 'update'])->name('personal-preference.update');
+    Route::apiResource('careers', CareerController::class)->only(['index']);
 });
 

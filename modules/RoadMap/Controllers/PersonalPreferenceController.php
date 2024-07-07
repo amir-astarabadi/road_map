@@ -16,7 +16,7 @@ class PersonalPreferenceController extends Controller
      */
     public function index()
     {
-        //
+        return PersonalPreferenceResource::collection(PersonalPreference::belongsToUser(auth()->user())->get());
     }
 
     /**
@@ -25,7 +25,7 @@ class PersonalPreferenceController extends Controller
     public function store(PersonalPreferenceCreateRequest $request)
     {
         $personalPreference = PersonalPreference::startFor(auth()->user());
-        
+
         return PersonalPreferenceResource::make($personalPreference);
     }
 
@@ -34,14 +34,15 @@ class PersonalPreferenceController extends Controller
      */
     public function show(PersonalPreference $personalPreference)
     {
-        //
+        return PersonalPreferenceResource::make($personalPreference);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PersonalPreferenceUpdateRequest $request, PersonalPreference $personalPreference)
+    public function update(PersonalPreferenceUpdateRequest $request, ?PersonalPreference $personalPreference)
     {
+        $personalPreference = $request->getPersonalPreference();
         $personalPreference->update($request->validated());
         return PersonalPreferenceResource::make($personalPreference);
     }

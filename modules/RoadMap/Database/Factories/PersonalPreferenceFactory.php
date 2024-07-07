@@ -4,9 +4,12 @@ namespace Modules\RoadMap\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Authentication\Models\User;
-use Modules\RoadMap\Enums\CourseLength;
+use Modules\RoadMap\Enums\CourseFormat;
 use Modules\RoadMap\Enums\CourseLocation;
-use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
+use Modules\RoadMap\Enums\NeedDegree;
+use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus as Status;
+use Modules\RoadMap\Enums\WorkExperience;
+use Modules\RoadMap\Models\Career;
 use Modules\RoadMap\Models\PersonalPreference;
 
 /**
@@ -25,12 +28,13 @@ class PersonalPreferenceFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'career_id' => Career::factory(),
             'budget' => null,
-            'course_length_type' => null,
-            'course_location_type' => null,
-            'industries' => null,
-            'jobs' => null,
-            'status' => PersonalPreferencesProcessStatus::START,
+            'work_experience' => null,
+            'course_format' => null,
+            'need_degree' => null,
+            'duration' => null,
+            'status' => Status::START,
         ];
     }
 
@@ -42,11 +46,11 @@ class PersonalPreferenceFactory extends Factory
     public function inStatus(string $status)
     {
         $inputs = [
-            'budget' => !in_array($status, [PersonalPreferencesProcessStatus::START])  ? 150 : null,
-            'course_length_type' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET])  ? CourseLength::LONG_TERM : null,
-            'course_location_type' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET, PersonalPreferencesProcessStatus::COURSE_LENGTH]) ? CourseLocation::ONLINE : null,
-            'industries' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET, PersonalPreferencesProcessStatus::COURSE_LENGTH,PersonalPreferencesProcessStatus::COURSE_LOCATION ]) ? ['i1, i2'] : null,
-            'jobs' => !in_array($status, [PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET, PersonalPreferencesProcessStatus::COURSE_LENGTH,PersonalPreferencesProcessStatus::COURSE_LOCATION, PersonalPreferencesProcessStatus::INDUSTRIES ]) ? ['j1, j2'] : null,
+            'career_id' => !in_array($status, [Status::START->value])  ? Career::factory()->create()->getKey() : null,
+            'budget' => !in_array($status, [Status::START->value, Status::CAREER->value]) ? ['min' => 10, 'max' => 1000] : null,
+            'work_experience' => !in_array($status, [Status::START->value, Status::CAREER->value, Status::BUDGET->value])  ? WorkExperience::ZERO_TO_TWO : null,
+            'course_format' => !in_array($status, [Status::START->value, Status::CAREER->value, Status::BUDGET->value, Status::WORK_EXPERIENCE->value]) ? CourseFormat::ONLINE->value : null,
+            'need_degree' => !in_array($status, [Status::START->value, Status::CAREER->value, Status::BUDGET->value, Status::WORK_EXPERIENCE->value, Status::COURSE_FORMAT->value]) ? NeedDegree::YES->value : null,
             'status' => $status,
         ];
         return $this->state($inputs);

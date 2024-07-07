@@ -5,6 +5,7 @@ namespace Modules\Authentication\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Modules\Authentication\Enums\Sex;
 use Modules\Authentication\Models\User;
 
 /**
@@ -26,11 +27,14 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'first_name' => fake()->name(),
+            'last_name' => fake()->lastName(),
+            'sex' => Sex::MALE->value,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'birth_date' => now()->subYears(15),
         ];
     }
 

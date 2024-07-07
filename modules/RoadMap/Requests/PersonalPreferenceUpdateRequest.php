@@ -3,19 +3,32 @@
 namespace Modules\RoadMap\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
+use Modules\RoadMap\Enums\CourseFormat;
 use Modules\RoadMap\Enums\CourseLength;
 use Modules\RoadMap\Enums\CourseLocation;
-use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
+use Modules\RoadMap\Enums\Duration;
+use Modules\RoadMap\Enums\NeedDegree;
+use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus as Status;
+use Modules\RoadMap\Enums\WorkExperience;
+use Modules\RoadMap\Models\PersonalPreference;
 
 class PersonalPreferenceUpdateRequest extends FormRequest
 {
+
+    private ?PersonalPreference $personalPreference;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->personalPreference = $this->route('personal_preference') ?? PersonalPreference::getOrMakeAnOngoing();
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-
         return true;
     }
 
@@ -28,52 +41,65 @@ class PersonalPreferenceUpdateRequest extends FormRequest
     {
         $this->map();
         return [
-            'budget' => [
+            'career_id' => [
                 'nullable',
                 'integer',
-                'min:1',
-                'max:100000',
-                Rule::requiredIf($this->route('personal_preference')->isOnStatus([PersonalPreferencesProcessStatus::START, PersonalPreferencesProcessStatus::BUDGET]))
+                'exists:careers,id',
+                Rule::requiredIf($this->personalPreference->isOnStatus(Status::START->value))
             ],
-
-            'course_length_type' => [
-                'nullable',
-                'string',
-                'in:' . implode(',', CourseLength::values()),
-                Rule::requiredIf($this->route('personal_preference')->isOnStatus(PersonalPreferencesProcessStatus::COURSE_LENGTH))
-            ],
-
-            'course_location_type' => [
-                'nullable',
-                'string',
-                'in:' . implode(',', CourseLocation::values()),
-                Rule::requiredIf($this->route('personal_preference')->isOnStatus(PersonalPreferencesProcessStatus::COURSE_LOCATION))
-            ],
-
-            'industries' => [
+            'budget' => [
                 'nullable',
                 'array',
-                Rule::requiredIf($this->route('personal_preference')->isOnStatus(PersonalPreferencesProcessStatus::INDUSTRIES))
+                'size:2',
+                Rule::requiredIf($this->personalPreference->isOnStatus(Status::BUDGET->value))
             ],
-            'industries.*' => ['string', 'min:2', 'max:20'],
+            'budget.min' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
+            'budget.max' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
 
-            'jobs' => [
+            'work_experience' => [
                 'nullable',
-                'array',
-                Rule::requiredIf($this->route('personal_preference')->isOnStatus(PersonalPreferencesProcessStatus::JOBS))
+                'integer',
+                'in:' . implode(',', WorkExperience::values()),
+                Rule::requiredIf($this->personalPreference->isOnStatus(Status::WORK_EXPERIENCE->value))
             ],
-            'jobs.*' => ['string', 'min:2', 'max:20']
+
+            'course_format' => [
+                'nullable',
+                'integer',
+                'in:' . implode(',', CourseFormat::values()),
+                Rule::requiredIf($this->personalPreference->isOnStatus(Status::COURSE_FORMAT->value))
+            ],
+
+            'need_degree' => [
+                'nullable',
+                'integer',
+                'in:' . implode(',', NeedDegree::values()),
+                Rule::requiredIf($this->personalPreference->isOnStatus(Status::DEGREE->value))
+            ],
+
+            'duration' => [
+                'nullable',
+                'integer',
+                'in:' . implode(',', Duration::values()),
+                Rule::requiredIf($this->personalPreference->isOnStatus(Status::DURATION->value))
+            ],
         ];
     }
 
     public function map()
     {
         $this->merge([
-            'budget' => $this->get('budget_amount', $this->route('personal_preference')->budget),
-            'course_length_type' => $this->get('course_length', $this->route('personal_preference')->course_length_type),
-            'course_location_type' => $this->get('course_location', $this->route('personal_preference')->course_location_type),
-            'industries' => $this->get('intrested_industries', $this->route('personal_preference')->industries),
-            'jobs' => $this->get('intrested_jobs', $this->route('personal_preference')->jobs),
+            'career_id' => $this->get('intrested_career', $this->personalPreference->career_id),
+            'budget' => $this->get('budget_amount', $this->personalPreference->budget),
+            'work_experience' => $this->get('work_experience', $this->personalPreference->work_experience),
+            'course_format' => $this->get('course_format', $this->personalPreference->course_format),
+            'need_degree' => $this->get('need_degree', $this->personalPreference->need_degree),
+            'duration' => $this->get('duration', $this->personalPreference->duration),
         ]);
+    }
+
+    public function getPersonalPreference()
+    {
+        return $this->personalPreference;
     }
 }

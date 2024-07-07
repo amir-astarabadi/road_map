@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\PersonalPreferenceFactory;
+use Modules\RoadMap\Enums\CourseFormat;
 use Modules\RoadMap\Enums\CourseLength;
 use Modules\RoadMap\Enums\CourseLocation;
+use Modules\RoadMap\Enums\Duration;
+use Modules\RoadMap\Enums\NeedDegree;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
+use Modules\RoadMap\Enums\WorkExperience;
 
 class PersonalPreference extends Model
 {
@@ -18,17 +22,20 @@ class PersonalPreference extends Model
 
     protected $fillable = [
         'user_id',
+        'career_id',
         'budget',
-        'course_length_type',
-        'course_location_type',
-        'industries',
-        'jobs',
+        'work_experience',
+        'course_format',
+        'need_degree',
+        'duration',
         'status',
     ];
 
     protected $cases = [
-        'course_length' => CourseLength::class,
-        'course_location_type' => CourseLocation::class,
+        'work_experience' => WorkExperience::class,
+        'course_format' => CourseFormat::class,
+        'need_degree' => NeedDegree::class,
+        'duration' => Duration::class,
         'status' => PersonalPreferencesProcessStatus::class,
     ];
 
@@ -37,15 +44,13 @@ class PersonalPreference extends Model
         return new PersonalPreferenceFactory();
     }
 
-    public function jobs(): Attribute
+    public function budget(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => json_decode($value),
+            get: fn ($value) => json_decode($value, true),
             set: fn ($value) => json_encode($value)
         );
     }
-
-
 
     public function industries(): Attribute
     {
@@ -55,7 +60,7 @@ class PersonalPreference extends Model
         );
     }
 
-    public function scopeBlongToUser(Builder $query, User $user): Builder
+    public function scopeBelongsToUser(Builder $query, User $user): Builder
     {
         return $query->whereUserId($user->getKey());
     }
@@ -75,52 +80,66 @@ class PersonalPreference extends Model
 
     public function isOnStatus(string|array $status): bool
     {
-        if(is_array($status)){
+        if (is_array($status)) {
             return in_array($this->status, $status);
         }
-        
+
         return $this->status === $status;
+    }
+
+    public static function getOrMakeAnOngoing()
+    {
+        return static::belongsToUser(auth()->user())->isOpen()->first() ??
+            static::create([
+                'user_id' => auth()->id(),
+                'status' => PersonalPreferencesProcessStatus::START
+            ]);
     }
 
     public function updateStatus()
     {
-        
-        if(filled($this->budget)){
-            $this->status = PersonalPreferencesProcessStatus::COURSE_LENGTH;
-        }else{
+        if (filled($this->career_id)) {
+            $this->status = PersonalPreferencesProcessStatus::BUDGET;
+        } else {
+            $this->status = PersonalPreferencesProcessStatus::CAREER;
+            return;
+        }
+
+        if (filled($this->budget)) {
+            $this->status = PersonalPreferencesProcessStatus::WORK_EXPERIENCE;
+        } else {
             $this->status = PersonalPreferencesProcessStatus::BUDGET;
             return;
         }
-        
-        if(filled($this->course_length_type)){
-            $this->status = PersonalPreferencesProcessStatus::COURSE_LOCATION;
-        }else{
-            $this->status = PersonalPreferencesProcessStatus::COURSE_LENGTH;
+
+        if (filled($this->work_experience)) {
+            $this->status = PersonalPreferencesProcessStatus::COURSE_FORMAT;
+        } else {
+            $this->status = PersonalPreferencesProcessStatus::WORK_EXPERIENCE;
             return;
         }
-        
-        if (filled($this->course_location_type)) {
-            $this->status = PersonalPreferencesProcessStatus::INDUSTRIES;
-        }else{
-            $this->status = PersonalPreferencesProcessStatus::COURSE_LOCATION;
+        if (filled($this->course_format)) {
+            $this->status = PersonalPreferencesProcessStatus::DEGREE;
+        } else {
+            $this->status = PersonalPreferencesProcessStatus::COURSE_FORMAT;
             return;
         }
 
-        if (filled($this->industries)) {
-            $this->status = PersonalPreferencesProcessStatus::JOBS;
-        }else{
-            $this->status = PersonalPreferencesProcessStatus::INDUSTRIES;
+        if (filled($this->need_degree)) {
+            $this->status = PersonalPreferencesProcessStatus::DURATION;
+        } else {
+            $this->status = PersonalPreferencesProcessStatus::DEGREE;
             return;
         }
 
-        if (filled($this->jobs)) {
+        if (filled($this->duration)) {
             $this->status = PersonalPreferencesProcessStatus::FINISH;
             return;
-        }else{
-            $this->status = PersonalPreferencesProcessStatus::JOBS;
+        } else {
+            $this->status = PersonalPreferencesProcessStatus::DURATION;
             return;
         }
 
-        $this->status = PersonalPreferencesProcessStatus::BUDGET;
+        $this->status = PersonalPreferencesProcessStatus::DURATION;
     }
 }
