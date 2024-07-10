@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Response;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Modules\Authentication\Models\User;
-use Modules\RoadMap\Enums\CourseLength;
 use Modules\RoadMap\Enums\CourseFormat;
 use Modules\RoadMap\Enums\Duration;
 use Modules\RoadMap\Enums\NeedDegree;

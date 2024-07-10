@@ -8,10 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Seeders\CareerSeeder;
-use Modules\RoadMap\Enums\CourseLength;
-use Modules\RoadMap\Enums\CourseLocation;
-use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
-use Modules\RoadMap\Models\PersonalPreference;
+
 use Tests\TestCase;
 
 class CareerControllerTest extends TestCase
