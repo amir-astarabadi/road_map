@@ -7,6 +7,7 @@ use Modules\RoadMap\Database\Factories\CareerFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\RoadMap\Database\Factories\QuestionFactory;
 use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Enums\QuestionCompetency;
 
 class Question extends Model
 {
@@ -15,10 +16,12 @@ class Question extends Model
     protected $fillable = [
         'title',
         'category',
+        'competency',
     ];
 
     protected $casts = [
-        'category' => QuestionCategory::class
+        'category' => QuestionCategory::class,
+        'competency' => QuestionCompetency::class
     ];
 
     protected static function newFactory()
