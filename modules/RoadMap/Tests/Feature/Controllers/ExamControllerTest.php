@@ -36,10 +36,8 @@ class ExamControllerTest extends TestCase
                 ->count("data.questions", Question::count())
                 ->etc()
         );
-        $this->assertDatabaseCount('answershits', Question::count());
         $this->assertDatabaseCount('exams', 1);
         $this->assertDatabaseHas('exams', ['user_id' => $this->authUser->getKey()]);
-        $this->assertDatabaseHas('answershits', ['question_id' => $response->json('data.questions.0.id'), 'exam_id' => $response->json('data.exam_id')]);
     }
 
     public function test_start_exam_does_not_create_new_exam_if_an_ongoing_exists()
@@ -51,6 +49,21 @@ class ExamControllerTest extends TestCase
 
         $this->assertDatabaseCount('exams', 1);
         $this->assertDatabaseHas('exams', ['user_id' => $this->authUser->getKey()]);
+    }
+
+    public function test_user_can_store_answers()
+    {
+        $questions = Question::factory(2)->has(Answer::factory(2), 'answers')->create();
+        $exam = Exam::factory()->forUser($this->authUser)->create();
+        $inputs = [];
+    
+        
+        foreach($questions as $q){
+            $inputs['answershit'][] = ['question_id' => $q->getKey(), 'answer_id' => $q->answers->first()->getKey()];
+        }
+        $response = $this->actingAs($this->authUser)->putJson(route('exams.update', ['exam' => $exam->getKey()]), $inputs);
+
+        dd($response->json());
     }
 
 }

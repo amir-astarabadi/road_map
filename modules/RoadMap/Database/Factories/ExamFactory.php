@@ -26,4 +26,11 @@ class ExamFactory extends Factory
             'result' => [],
         ];
     }
+
+    public function forUser(User $user)
+    {
+        return $this->state([
+            'user_id' => $user->getKey()
+        ]);
+    }
 }

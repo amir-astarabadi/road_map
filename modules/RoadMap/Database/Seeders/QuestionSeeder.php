@@ -4,6 +4,7 @@ namespace Modules\RoadMap\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Enums\QuestionCompetency;
 use Modules\RoadMap\Models\Answer;
 use Modules\RoadMap\Models\Career;
 use Modules\RoadMap\Models\Question;
@@ -16,7 +17,7 @@ class QuestionSeeder extends Seeder
     public function run(): void
     {
 
-        if(Question::exists()){
+        if (Question::exists()) {
             return;
         }
 
@@ -24,6 +25,7 @@ class QuestionSeeder extends Seeder
 
             [
                 "category" => QuestionCategory::PROBLEM_SOLVING,
+                "competency" => QuestionCompetency::PROBLEM_SOLVING_ONE,
                 "title" => "How do you start approach solving everyday challenges in your life?",
                 "answers" => [
                     3 => "Gathering all relevant information, breaking down the problem into smaller parts,…",
@@ -34,40 +36,21 @@ class QuestionSeeder extends Seeder
 
             [
                 "category" => QuestionCategory::PROBLEM_SOLVING,
-                "title" => "Imagine a situation where you
-had to deal with a difficult team
-member while working on a
-project, what is your approach:
-PS: the project is timely and you
-have two weeks to complete it
-and present it to the CEO of your
-organization, and you are the one
-who lead the team and results",
+                "competency" => QuestionCompetency::PROBLEM_SOLVING_TWO,
+                "title" => "Imagine a situation where you had to deal with a difficult team member while working on a project, what is your approach: PS: the project is timely and you have two weeks to complete it and present it to the CEO of your organization, and you are the one who lead the team and results",
                 "answers" => [
-                    3 => "I organize a one-on-one discussion,
-actively listen to their concerns, and found
-common ground to adjust our approach
-and work together more smoothly.",
-                    2 => "Because we have limited time, get him out
-of the project and revise our priorities.",
-                    1 => "Continue the projects without considering
-this issue, because we have limited time
-and when we finish the project I will solve
-the issue with him.",
+                    3 => "I organize a one-on-one discussion, actively listen to their concerns, and found common ground to adjust our approach and work together more smoothly.",
+                    2 => "Because we have limited time, get him out of the project and revise our priorities.",
+                    1 => "Continue the projects without considering this issue, because we have limited time and when we finish the project I will solve the issue with him.",
                 ]
             ],
 
             [
                 "category" => QuestionCategory::PROBLEM_SOLVING,
-                "title" => "How do you handle situations
-when you encounter resistance to
-your proposed solutions?",
+                "competency" => QuestionCompetency::PROBLEM_SOLVING_THREE,
+                "title" => "How do you handle situationswhen you encounter resistance toyour proposed solutions?",
                 "answers" => [
-                    3 => "I try to understand the reasons behind the
-resistance, provide data and examples to
-support my solution and I’m open to
-adjusting my proposal based on
-constructive feedback.",
+                    3 => "I try to understand the reasons behind the resistance, provide data and examples to support my solution and I’m open to adjusting my proposal based on constructive feedback.",
                     2 => "I try to understand the reasons behind the
 resistance highlight the benefits.",
                     1 => "I adjust my proposal based on
@@ -78,6 +61,7 @@ them why I chose the first solution.",
 
             [
                 "category" => QuestionCategory::PROBLEM_SOLVING,
+                "competency" => QuestionCompetency::PROBLEM_SOLVING_FOUR,
                 "title" => "Which tools do you know and
 have used so far?
 (Brainstorming, Fishbone diagram,
@@ -92,6 +76,7 @@ MECE)",
 
             [
                 "category" => QuestionCategory::PROBLEM_SOLVING,
+                "competency" => QuestionCompetency::PROBLEM_SOLVING_FIVE,
                 "title" => "You have been appointed as
 the head of the office that
 allocates funds for promoting
@@ -141,6 +126,7 @@ various forms.",
 
             [
                 "category" => QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS,
+                "competency" => QuestionCompetency::LEADER_SHIP_AND_PEPPLE_SKILLS_ONE,
                 "title" => "Have you ever had the
 experience of leading a team?",
                 "answers" => [
@@ -152,6 +138,7 @@ experience of leading a team?",
 
             [
                 "category" => QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS,
+                "competency" => QuestionCompetency::LEADER_SHIP_AND_PEPPLE_SKILLS_TWO,
                 "title" => "How do you encourage team
 members to take responsibilities of
 the problems they encounter and
@@ -173,6 +160,7 @@ penalty for mistakes.",
 
             [
                 "category" => QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS,
+                "competency" => QuestionCompetency::LEADER_SHIP_AND_PEPPLE_SKILLS_THREE,
                 "title" => "Do people rely on you for career
 advice, even after they’ve left the
 company?",
@@ -186,6 +174,7 @@ but others would not.",
 
             [
                 "category" => QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS,
+                "competency" => QuestionCompetency::LEADER_SHIP_AND_PEPPLE_SKILLS_FOUR,
                 "title" => "Do you have a very large
 contact list, and are you good at
 keeping in touch with people?",
@@ -199,6 +188,7 @@ but others would not.",
 
             [
                 "category" => QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS,
+                "competency" => QuestionCompetency::LEADER_SHIP_AND_PEPPLE_SKILLS_FIVE,
                 "title" => "You are in the charge of
 assisting trainees of the traffic
 control department to make
@@ -243,6 +233,7 @@ it is our duty to maintain the order. ",
 
             [
                 "category" => QuestionCategory::SELF_MANAGMENT,
+                "competency" => QuestionCompetency::SELF_MANAGMENT_ONE,
                 "title" => "How would you rate yourself in
 terms of managing your time?",
                 "answers" => [
@@ -259,6 +250,7 @@ only 10 or 15 minutes late.",
 
             [
                 "category" => QuestionCategory::SELF_MANAGMENT,
+                "competency" => QuestionCompetency::SELF_MANAGMENT_TWO,
                 "title" => "How organised are you in the
 morning?",
                 "answers" => [
@@ -280,6 +272,7 @@ accept the consequences.",
 
             [
                 "category" => QuestionCategory::SELF_MANAGMENT,
+                "competency" => QuestionCompetency::SELF_MANAGMENT_THREE,
                 "title" => "I have made a mistake that no
 one else knows about. When the
 problem becomes known it
@@ -302,6 +295,7 @@ best solution for the situation.",
 
             [
                 "category" => QuestionCategory::SELF_MANAGMENT,
+                "competency" => QuestionCompetency::SELF_MANAGMENT_FOUR,
                 "title" => "Which one describes you the
 best in described situation?
 When I get upset and my mind
@@ -323,6 +317,7 @@ people want to help me, I reject their offer.",
 
             [
                 "category" => QuestionCategory::SELF_MANAGMENT,
+                "competency" => QuestionCompetency::SELF_MANAGMENT_FIVE,
                 "title" => "Imagine you are working for five
 years in a company where you like
 the culture and also you love your
@@ -347,6 +342,7 @@ perfectly and powerfully.",
 
             [
                 "category" => QuestionCategory::AI_AND_TECH,
+                "competency" => QuestionCompetency::AI_AND_TECH_ONE,
                 "title" => "Which one describes you the
 best?",
                 "answers" => [
@@ -361,6 +357,7 @@ it’s needed.",
 
             [
                 "category" => QuestionCategory::AI_AND_TECH,
+                "competency" => QuestionCompetency::AI_AND_TECH_TWO,
                 "title" => "How often do you use AI search
 engines?",
                 "answers" => [
@@ -375,6 +372,7 @@ topics",
 
             [
                 "category" => QuestionCategory::AI_AND_TECH,
+                "competency" => QuestionCompetency::AI_AND_TECH_THREE,
                 "title" => "Which one describes you the
 best?",
                 "answers" => [
@@ -393,6 +391,7 @@ independently.",
 
             [
                 "category" => QuestionCategory::AI_AND_TECH,
+                "competency" => QuestionCompetency::AI_AND_TECH_FOUR,
                 "title" => "Which programming language is
 commonly used for AI and
 machine learning?",
@@ -405,6 +404,7 @@ machine learning?",
 
             [
                 "category" => QuestionCategory::AI_AND_TECH,
+                "competency" => QuestionCompetency::AI_AND_TECH_FIVE,
                 "title" => "What is your familiarity with
 programming languages?",
                 "answers" => [
@@ -423,7 +423,7 @@ but have not used them much.",
 
         foreach ($questions as $question) {
             $newQuestion = Question::create(
-                ['title' => $question['title'], 'category' => $question['category']]
+                ['title' => $question['title'], 'category' => $question['category'],  'competency' => $question['competency']]
             );
 
             foreach ($question['answers'] as $score => $title) {

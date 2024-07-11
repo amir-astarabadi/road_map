@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class, 'user_id');
             $table->json('result')->nullable()->default(null);
-            $table->boolean('finished')->default(0);
+            $table->timestamp('finished_at')->nullable();
             $table->timestamps();
         });
     }

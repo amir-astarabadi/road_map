@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\ExamFactory;
+use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Enums\QuestionCompetency;
 
 class Exam extends Model
 {
@@ -17,6 +19,7 @@ class Exam extends Model
     protected $fillable = [
         'user_id',
         'result',
+        'finished_at',
     ];
 
     protected static function newFactory()
@@ -42,14 +45,19 @@ class Exam extends Model
         );
     }
 
-    public function scopeOnGoing(Builder $query):Builder
+    public function scopeOnGoing(Builder $query): Builder
     {
-        return $query->whereFinished(false);
+        return $query->whereNull('finished_at');
     }
 
-    public function scopeForUser(Builder $query, User $user):Builder
+    public function scopeForUser(Builder $query, User $user): Builder
     {
         return $query->whereUserId($user->getKey());
+    }
+
+    public function isOwnedBy(User $user)
+    {
+        return $user->getKey() === $this->user_id;
     }
 
     public static function startFor(User $user)
@@ -63,9 +71,57 @@ class Exam extends Model
         return static::create(['user_id' => $user->getKey()]);
     }
 
-    public function storeRawAnswershit()
+    public function storeAnswershit(array $answershit): void
     {
-        $questions = Question::all(['id'])->map(fn ($q) => $q = ['exam_id' => $this->id, 'question_id' => $q->id]);
-        DB::table('answershits')->insert($questions->toArray());
+        $answershit = array_column($answershit, 'answer_id', 'question_id');
+        $scores = DB::table('questions')
+            ->join('answers', 'questions.id', '=', 'answers.question_id')
+            ->whereIn('answers.id', array_values($answershit))
+            ->selectRaw("{$this->getKey()} as exam_id")
+            ->selectRaw("answers.id as answer_id")
+            ->selectRaw("questions.id as question_id")
+            ->selectRaw("now() as created_at")
+            ->selectRaw("now() as updated_at")
+            ->selectRaw("score")
+            ->get()
+            ->toArray();
+
+        // convert from std class to array
+        $scores = json_decode(json_encode($scores, true), true);
+
+        DB::table('answershits')->upsert($scores, ['exam_id', 'question_id']);
     }
+
+    public function updateResult()
+    {
+        $result = Answershit::whereExamId($this->getKey())
+            ->join('questions', 'questions.id', '=', 'question_id')
+            ->selectRaw($this->mapCategoryQuery())
+            ->selectRaw('competency')
+            ->selectRaw('sum(score) as score')
+            ->groupBy('category')
+            ->groupBy('competency')
+            ->get();
+            $totalScores = [];
+            foreach(QuestionCategory::cases() as $case)
+            {
+                $totalScores['category'][$case->name] = $result->where('category', $case->name)->sum('score');
+            }
+
+            foreach(QuestionCompetency::cases() as $case)
+            {
+                $totalScores['competency'][$case->name] = $result->where('competency', $case->value)->sum('score');
+            }
+
+            $this->update(['result' => $totalScores, 'finished_at' => now()]);
+    }
+
+    private function mapCategoryQuery()
+    {
+        return "IF( category = " . QuestionCategory::PROBLEM_SOLVING->value . ", '" .QuestionCategory::PROBLEM_SOLVING->name . "', " .
+               "IF( category = " . QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS->value . ", '" .QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS->name . "' , " .
+               "IF( category = " . QuestionCategory::SELF_MANAGMENT->value . ", '" .QuestionCategory::SELF_MANAGMENT->name . "' , " .
+               "IF( category = " . QuestionCategory::AI_AND_TECH->value . ", '" .QuestionCategory::AI_AND_TECH->name . "' , NULL)))) as category";
+    }
+
 }

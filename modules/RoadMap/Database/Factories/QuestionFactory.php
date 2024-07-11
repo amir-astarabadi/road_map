@@ -4,6 +4,7 @@ namespace Modules\RoadMap\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Enums\QuestionCompetency;
 use Modules\RoadMap\Models\Career;
 use Modules\RoadMap\Models\Question;
 
@@ -23,7 +24,8 @@ class QuestionFactory extends Factory
     {
         return [
             'title' => fake()->realText(10),
-            'category' => QuestionCategory::AI_AND_TECH,
+            'category' => QuestionCategory::cases()[array_rand(QuestionCategory::cases())],
+            'competency' => QuestionCompetency::cases()[array_rand(QuestionCompetency::cases())],
         ];
     }
 }

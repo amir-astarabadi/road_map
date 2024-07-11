@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\RoadMap\Models\Exam;
 use Modules\RoadMap\Models\PersonalPreference;
+use Modules\RoadMap\Requests\AnswershitUpdateRequest;
 use Modules\RoadMap\Requests\PersonalPreferenceUpdateRequest;
 use Modules\RoadMap\Resources\ExamResource;
 use Modules\RoadMap\Resources\PersonalPreferenceResource;
@@ -18,18 +19,18 @@ class ExamController extends Controller
     public function store(Request $request)
     {
         $exam = Exam::startFor(auth()->user());
-        $exam->storeRawAnswershit();
-
+        
         return ExamResource::make($exam);
     }
-
+    
     /**
      * Update the specified resource in storage.
      */
-    public function update(PersonalPreferenceUpdateRequest $request, ?PersonalPreference $personalPreference)
+    public function update(AnswershitUpdateRequest $request, Exam $exam)
     {
-        $personalPreference = $request->getPersonalPreference();
-        $personalPreference->update($request->validated());
-        return PersonalPreferenceResource::make($personalPreference);
+        $exam->storeAnswershit($request->validated('answershit'));
+        $exam->updateResult();
+        
+        return response(['data' => $exam->result]);
     }
 }
