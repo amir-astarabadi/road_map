@@ -22,7 +22,7 @@ class AnswershitUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->route('exam')->isOwnedBy(auth()->user());
+        return $this->route('exam')->isOwnedBy(auth()->user()) && $this->route('exam')->isOnGoing();
     }
 
     /**

@@ -60,6 +60,11 @@ class Exam extends Model
         return $user->getKey() === $this->user_id;
     }
 
+    public function isOnGoing()
+    {
+        return is_null($this->finished_at);
+    }
+
     public static function startFor(User $user)
     {
         $onGoingExam = static::onGoing()->forUser($user)->first();
