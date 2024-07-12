@@ -5,6 +5,7 @@ namespace Modules\RoadMap\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Modules\RoadMap\Models\Question;
 
 class ValidateAnswer implements ValidationRule
@@ -14,12 +15,14 @@ class ValidateAnswer implements ValidationRule
      *
      * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
-    public function validate(string $attribute, mixed $answers, Closure $fail): void
+    public function validate(string $attribute, mixed $answers, Closure $fail):void
     {
         $validQuestionsAndAnswers = $this->getQuestionsWithAnswers();
 
         foreach ($answers as $answer) {
-            $this->check($answer['answer_id'], $answer['question_id'], $validQuestionsAndAnswers);
+            if(!$this->check($answer['answer_id'], $answer['question_id'], $validQuestionsAndAnswers)){
+                $fail("mismatch question {$answer['question_id']} and answer {$answer['answer_id'] }. ");
+            };
         }
     }
 

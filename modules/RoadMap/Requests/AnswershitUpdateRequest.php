@@ -32,6 +32,7 @@ class AnswershitUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'answershit' => ['required', 'array', 'min:1', 'max:20', new ValidateAnswer()],
             'answershit.*.question_id' => ['required', 'bail', 'integer', 'exists:questions,id'], // 'min:1', 'max:20'
