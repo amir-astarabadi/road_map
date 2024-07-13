@@ -2,6 +2,7 @@
 
 namespace Modules\RoadMap\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\RoadMap\Database\Factories\CareerFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,15 @@ class Question extends Model
     protected static function newFactory()
     {
         return new QuestionFactory();
+    }
+
+    public function getCategoryEnumAttribute()
+    {
+        $category =  QuestionCategory::from($this->getRawOriginal('category'));
+        return [
+            'name' => $category->name,
+            'value' => $category->value,
+        ];
     }
 
     public function answers()

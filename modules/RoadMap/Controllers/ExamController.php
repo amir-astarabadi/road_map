@@ -5,11 +5,8 @@ namespace Modules\RoadMap\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\RoadMap\Models\Exam;
-use Modules\RoadMap\Models\PersonalPreference;
 use Modules\RoadMap\Requests\AnswershitUpdateRequest;
-use Modules\RoadMap\Requests\PersonalPreferenceUpdateRequest;
 use Modules\RoadMap\Resources\ExamResource;
-use Modules\RoadMap\Resources\PersonalPreferenceResource;
 
 class ExamController extends Controller
 {

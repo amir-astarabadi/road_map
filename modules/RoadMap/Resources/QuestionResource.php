@@ -4,6 +4,7 @@ namespace Modules\RoadMap\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\RoadMap\Enums\QuestionCategory;
 use Modules\RoadMap\Models\Answer;
 
 class QuestionResource extends JsonResource
@@ -18,6 +19,7 @@ class QuestionResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'title' => $this->resource->title,
+            'category' => $this->resource->category_enum,
             'answers' => AnswerResource::collection($this->resource->answers),
         ];
     }
