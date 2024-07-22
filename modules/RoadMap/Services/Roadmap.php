@@ -43,6 +43,7 @@ class Roadmap
     private static function fakeBook()
     {
         return [
+            "id" => random_int(1, 250),
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
