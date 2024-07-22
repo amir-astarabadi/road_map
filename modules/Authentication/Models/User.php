@@ -10,8 +10,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Authentication\Database\Factories\UserFactory;
 use Modules\Authentication\Enums\Sex;
+use Filament\FilamentManager;
+use Filament\Models\Contracts\HasName;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasName
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -54,5 +56,10 @@ class User extends Authenticatable
     protected static function newFactory(): UserFactory
     {
         return new UserFactory();
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->first_name . " " . $this->last_name;
     }
 }

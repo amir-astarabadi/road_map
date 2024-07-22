@@ -2,7 +2,9 @@
 
 namespace Modules\RoadMap\Enums;
 
-enum QuestionCategory: int
+use Filament\Support\Contracts\HasLabel;
+
+enum QuestionCategory: int implements HasLabel
 {
     case PROBLEM_SOLVING = 1;
 
@@ -20,5 +22,11 @@ enum QuestionCategory: int
             self::SELF_MANAGMENT->value,
             self::AI_AND_TECH->value,
         ];
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->name;
+        
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Modules\RoadMap\Enums;
 
-enum QuestionCompetency: int
+use Filament\Support\Contracts\HasLabel;
+
+enum QuestionCompetency: int implements HasLabel
 {
     case PROBLEM_SOLVING_ONE = 11;
     case PROBLEM_SOLVING_TWO = 12;
@@ -55,5 +57,12 @@ enum QuestionCompetency: int
             self::AI_AND_TECH_FOUR->value,
             self::AI_AND_TECH_FIVE->value,
         ];
+    }
+
+
+    public function getLabel(): ?string
+    {
+        return $this->name;
+        
     }
 }

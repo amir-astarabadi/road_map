@@ -4,15 +4,17 @@ namespace Modules\RoadMap\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\RoadMap\Models\Answer;
+use Modules\RoadMap\Models\Answershit;
+use Modules\RoadMap\Models\Exam;
 use Modules\RoadMap\Models\Question;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PersonalPreference>
  */
-class AnswerFactory extends Factory
+class AnswerShitFactory extends Factory
 {
 
-    protected $model = Answer::class;
+    protected $model = Answershit::class;
     /**
      * Define the model's default state.
      *
@@ -20,17 +22,19 @@ class AnswerFactory extends Factory
      */
     public function definition(): array
     {
+        $q = Question::factory()->create();
         return [
-            'question_id' => Question::factory(),
-            'title' => fake()->realText(10),
+            'exam_id' => Exam::factory(),
+            'question_id' => $q->getKey(),
+            'answer_id' => Answer::factory()->forQuestion($q)->create()->getKey(),
             'score' => random_int(1, 3),
         ];
     }
 
-    public function forQuestion(Question $question)
+    public function forExam(Exam $exam)
     {
         return $this->state([
-            'question_id' => $question->getKey()
+            'exam_id' => $exam->getKey(),
         ]);
     }
 }

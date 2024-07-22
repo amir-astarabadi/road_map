@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Response;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Modules\Authentication\Models\User;
+use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Enums\QuestionCompetency;
 use Modules\RoadMap\Models\Question;
 use Modules\RoadMap\Models\Answer;
 use Modules\RoadMap\Models\Exam;
@@ -56,14 +58,20 @@ class ExamControllerTest extends TestCase
         $questions = Question::factory(2)->has(Answer::factory(2), 'answers')->create();
         $exam = Exam::factory()->forUser($this->authUser)->create();
         $inputs = [];
-    
-        
-        foreach($questions as $q){
+
+
+        foreach ($questions as $q) {
             $inputs['answershit'][] = ['question_id' => $q->getKey(), 'answer_id' => $q->answers->first()->getKey()];
         }
         $response = $this->actingAs($this->authUser)->putJson(route('exams.update', ['exam' => $exam->getKey()]), $inputs);
-
-        dd($response->json());
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->has('data.category')
+                ->has('data.category')
+                ->has('data.competency')
+                ->count('data.competency', count(QuestionCompetency::cases()))
+                ->count('data.category', count(QuestionCategory::cases()))
+                ->etc()
+        );
     }
-
 }
