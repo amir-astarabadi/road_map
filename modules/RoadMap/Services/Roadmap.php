@@ -4,6 +4,7 @@ namespace Modules\RoadMap\Services;
 
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Enums\CourseLength;
+use Modules\RoadMap\Enums\CourseLevel;
 use Modules\RoadMap\Enums\QuestionCategory;
 use Modules\RoadMap\Models\Exam;
 
@@ -31,9 +32,18 @@ class Roadmap
                     static::fakeBook(),
                     static::fakeBook(),
                 ],
-                "onlien courses" => [],
-                "youtube videos" => [],
-                "articles" => [],
+                "onlien courses" => [
+                    static::fakeOnlienCourses(),
+                    static::fakeOnlienCourses(),
+                ],
+                "youtube videos" => [
+                    static::fakeOnlienCourses(),
+                    static::fakeOnlienCourses(),
+                ],
+                "articles" => [
+                    static::fakeArticles(),
+                    static::fakeArticles(),
+                ],
             ];
         }
 
@@ -55,16 +65,72 @@ class Roadmap
             "publisher" => "John Wiley Sons Inc",
             "Language" => "English",
             "number_of_pages" => random_int(110, 350),
+            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
             "skills" => [
-                [
-                    'title' => QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-                    'level' => random_int(1, 5),
-                ],
-                [
-                    'title' => QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-                    'level' => random_int(1, 5),
-                ],
-            ]
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+            ],
+        ];
+    }
+
+    private static function fakeOnlienCourses()
+    {
+
+        return [
+            "id" => random_int(1, 250),
+            "title" => fake()->words(random_int(3, 5), true),
+            "description" => fake()->realText(random_int(500, 600)),
+            "price" => random_int(0, 10),
+            "picture" => asset('storage/images/temp.png'),
+            "channel" => ['TEDx Talks', 'Mindvalley Talks', 'TED-Ed'][random_int(0, 2)],
+            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
+            "skills" => [
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+            ],
+            'url' => 'https://www.youtube.com/watch?v=R5d-hN9UtpU',
+            'duration' => random_int(1, 3600)
+        ];
+    }
+
+    private static function fakeYoutubeVideos()
+    {
+        return [
+            "id" => random_int(1, 250),
+            "title" => fake()->words(random_int(3, 5), true),
+            "description" => fake()->realText(random_int(500, 600)),
+            "price" => random_int(0, 10),
+            "picture" => asset('storage/images/temp.png'),
+            "channel" => ['TEDx Talks', 'Mindvalley Talks', 'TED-Ed'][random_int(0, 2)],
+            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
+            "skills" => [
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+            ],
+            'url' => 'https://www.youtube.com/watch?v=R5d-hN9UtpU',
+            'duration' => random_int(1, 3600)
+        ];
+    }
+
+    private static function fakeArticles()
+    {
+        return [
+            "id" => random_int(1, 250),
+            "title" => fake()->words(random_int(3, 5), true),
+            "description" => fake()->realText(random_int(500, 600)),
+            "price" => random_int(0, 10),
+            "picture" => asset('storage/images/temp.png'),
+            "authors" => array_filter([
+                fake()->firstName() . " " . fake()->lastName(),
+                random_int(0, 1) ? fake()->firstName() . " " . fake()->lastName() : null
+            ]),
+            "publication" => "John Wiley Sons Inc",
+            "URL" => 'https://www.science.org/doi/abs/10.1126/science.1169588',
+            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
+            "skills" => [
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
+            ],
         ];
     }
 }
