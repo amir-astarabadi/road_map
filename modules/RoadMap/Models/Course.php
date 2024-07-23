@@ -43,5 +43,11 @@ class Course extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class);    }
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function attachToUser(User $user)
+    {
+        $this->users()->sync([$user->getKey()]);
+    }
 }

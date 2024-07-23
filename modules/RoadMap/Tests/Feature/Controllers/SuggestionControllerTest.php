@@ -40,7 +40,7 @@ class SuggestionControllerTest extends TestCase
         
         $response = $this->actingAs($this->authUser)->getJson(route('suggestions.show'));
 
-        dd($response->json());
+        // dd($response->json());
         $this->assertTrue(true);
     }
 }
