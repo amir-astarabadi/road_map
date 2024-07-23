@@ -5,7 +5,7 @@ namespace Modules\RoadMap\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AnswerResource extends JsonResource
+class ProfileResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,7 +16,7 @@ class AnswerResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'title' => $this->resource->title,
+            'courses' => $this->resource->courses,
         ];
     }
 }

@@ -4,7 +4,6 @@ namespace Modules\RoadMap\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\CourseFactory;
 use Modules\RoadMap\Enums\CourseLevel;

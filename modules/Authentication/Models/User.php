@@ -12,6 +12,7 @@ use Modules\Authentication\Database\Factories\UserFactory;
 use Modules\Authentication\Enums\Sex;
 use Filament\FilamentManager;
 use Filament\Models\Contracts\HasName;
+use Modules\RoadMap\Models\Course;
 
 class User extends Authenticatable implements HasName
 {
@@ -61,5 +62,10 @@ class User extends Authenticatable implements HasName
     public function getFilamentName(): string
     {
         return $this->first_name . " " . $this->last_name;
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
     }
 }
