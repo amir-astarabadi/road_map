@@ -12,11 +12,15 @@ use Modules\Authentication\Database\Factories\UserFactory;
 use Modules\Authentication\Enums\Sex;
 use Filament\FilamentManager;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Modules\RoadMap\Models\Course;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasName
+class User extends Authenticatable implements HasName, FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -67,5 +71,10 @@ class User extends Authenticatable implements HasName
     public function courses()
     {
         return $this->belongsToMany(Course::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole('admin');
     }
 }

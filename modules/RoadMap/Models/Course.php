@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\CourseFactory;
 use Modules\RoadMap\Enums\CourseLevel;
+use Modules\RoadMap\Enums\CourseType;
 
 class Course extends Model
 {
@@ -20,14 +21,19 @@ class Course extends Model
         'level_up_to',
         'url',
         'price',
-        'courseable_type',
-        'courseable_id',
+        'skills',
+        'channel',
+        'number_of_pages',
+        'duration',
+        'type',
+        'cover',
     ];
 
     protected $casts = [
         'level' => CourseLevel::class,
         'level_up_from' => CourseLevel::class,
         'level_up_to' => CourseLevel::class,
+        'type' => CourseType::class,
     ];
 
     protected static function newFactory()

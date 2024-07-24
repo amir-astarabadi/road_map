@@ -17,12 +17,17 @@ return new class extends Migration
             $table->id();
             $table->string('title')->index();
             $table->text('description')->fulltext();
+            $table->string('cover', 250)->nullable();
             $table->unsignedInteger('price');
             $table->unsignedTinyInteger('level')->comment('actually it"s enum handel by CourseLevelEnum');
             $table->unsignedTinyInteger('level_up_from')->comment('actually it"s enum handel by CourseLevelEnum');
             $table->unsignedTinyInteger('level_up_to')->comment('actually it"s enum handel by CourseLevelEnum');
             $table->string('url');
-            $table->morphs('courseable');
+            $table->unsignedTinyInteger('type');
+            $table->json('skills')->nullable();
+            $table->string('channel', 25)->nullable();
+            $table->unsignedTinyInteger('number_of_pages')->nullable();
+            $table->unsignedTinyInteger('duration')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +38,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('courses');
-        
     }
 };

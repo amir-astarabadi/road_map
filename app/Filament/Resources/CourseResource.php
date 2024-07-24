@@ -12,7 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Modules\RoadMap\Enums\CourseCategory;
 use Modules\RoadMap\Enums\CourseLevel;
+use Modules\RoadMap\Enums\CourseType;
 
 class CourseResource extends Resource
 {
@@ -30,6 +32,8 @@ class CourseResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('cover')
+                    ->maxLength(250),
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
@@ -43,11 +47,16 @@ class CourseResource extends Resource
                 Forms\Components\TextInput::make('url')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('courseable_type')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('courseable_id')
-                    ->required()
+                Forms\Components\Select::make('type')
+                    ->options(CourseType::class),
+                Forms\Components\Select::make('skills')
+                    ->options(CourseCategory::class)
+                    ->multiple(),
+                Forms\Components\TextInput::make('channel')
+                    ->maxLength(25),
+                Forms\Components\TextInput::make('number_of_pages')
+                    ->numeric(),
+                Forms\Components\TextInput::make('duration')
                     ->numeric(),
             ]);
     }
@@ -58,22 +67,31 @@ class CourseResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('cover')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->money()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level')
-
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level_up_from')
-
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level_up_to')
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('url')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('courseable_type')
+                Tables\Columns\TextColumn::make('type')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('channel')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('courseable_id')
+                Tables\Columns\TextColumn::make('number_of_pages')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('duration')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
