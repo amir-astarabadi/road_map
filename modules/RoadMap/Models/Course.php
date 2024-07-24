@@ -2,6 +2,7 @@
 
 namespace Modules\RoadMap\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Authentication\Models\User;
@@ -17,6 +18,7 @@ class Course extends Model
         'title',
         'description',
         'level',
+        'instructors',
         'level_up_from',
         'level_up_to',
         'url',
@@ -40,6 +42,24 @@ class Course extends Model
     {
         return new CourseFactory();
     }
+
+
+    public function skills():Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => json_decode($value),
+            set: fn($value) => json_encode($value),
+        );
+    }
+
+
+    public function levelUp():Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->level_up_from->name . " -> " .$this->level_up_to->name,
+        );
+    }
+
 
     public function users()
     {

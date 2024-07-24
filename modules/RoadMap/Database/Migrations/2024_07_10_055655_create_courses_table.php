@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title')->index();
             $table->text('description')->fulltext();
             $table->string('cover', 250)->nullable();
+            $table->string('instructors', 250)->nullable();
             $table->unsignedInteger('price');
             $table->unsignedTinyInteger('level')->comment('actually it"s enum handel by CourseLevelEnum');
             $table->unsignedTinyInteger('level_up_from')->comment('actually it"s enum handel by CourseLevelEnum');
@@ -26,8 +27,8 @@ return new class extends Migration
             $table->unsignedTinyInteger('type');
             $table->json('skills')->nullable();
             $table->string('channel', 25)->nullable();
-            $table->unsignedTinyInteger('number_of_pages')->nullable();
-            $table->unsignedTinyInteger('duration')->nullable();
+            $table->unsignedInteger('number_of_pages')->nullable();
+            $table->unsignedBigInteger('duration')->nullable();
             $table->timestamps();
         });
     }

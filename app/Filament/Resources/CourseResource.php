@@ -6,7 +6,13 @@ use App\Filament\Resources\CourseResource\Pages;
 use App\Filament\Resources\CourseResource\RelationManagers;
 use Modules\RoadMap\Models\Course;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,38 +32,74 @@ class CourseResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('cover')
-                    ->maxLength(250),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\Select::make('level')
-                    ->options(CourseLevel::class),
-                Forms\Components\Select::make('level_up_from')
-                    ->options(CourseLevel::class),
-                Forms\Components\Select::make('level_up_to')
-                    ->options(CourseLevel::class),
-                Forms\Components\TextInput::make('url')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('type')
-                    ->options(CourseType::class),
-                Forms\Components\Select::make('skills')
-                    ->options(CourseCategory::class)
-                    ->multiple(),
-                Forms\Components\TextInput::make('channel')
-                    ->maxLength(25),
-                Forms\Components\TextInput::make('number_of_pages')
-                    ->numeric(),
-                Forms\Components\TextInput::make('duration')
-                    ->numeric(),
+                Section::make('general information')
+                    ->schema([
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)->columnSpanFull(),
+
+                        TextInput::make('price')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$'),
+                        Select::make('skills')
+                            ->options(CourseCategory::class)
+                            ->multiple(),
+                        Textarea::make('description')
+                            ->required()
+                            ->columnSpan(2),
+                        FileUpload::make('cover')
+                            ->label('cover image')
+                            ->image(),
+
+                    ])->columns(3),
+                Section::make('type')
+                    ->schema([
+                        Select::make('type')
+                            ->reactive()
+                            ->options(CourseType::class),
+                        Section::make('Video Information')
+                            ->hidden(fn (callable $get) => $get('type') != 2)
+                            ->schema([
+                                TextInput::make('duration')
+                                    ->numeric(),
+                                TextInput::make('channel')
+                                    ->maxLength(25),
+                                TextInput::make('url')
+                                    ->required()
+                                    ->maxLength(255),
+                            ])->columns(2),
+                        Section::make('Book Information')
+                            ->hidden(fn (callable $get) => $get('type') != 1)
+                            ->schema([
+                                TextInput::make('number_of_pages')
+                                    ->label('number of pages')
+                                    ->numeric(),
+                                TextInput::make('instructors')
+                                    ->label('authors')->columnSpan(2),
+                            ])->columns(3),
+                        Section::make('Atricle Information')
+                            ->hidden(fn (callable $get) => $get('type') != 3)
+                            ->schema([
+                                TextInput::make('url')
+                                    ->label('url')
+                                    ->numeric(),
+                            ])->columns(1)
+                    ]),
+
+                Section::make('Level')
+                    ->schema([
+                        Select::make('level')
+                            ->label('course level')
+                            ->options(CourseLevel::class),
+                        Select::make('level_up_from')
+                            ->label('level up from')
+                            ->options(CourseLevel::class),
+                        Select::make('level_up_to')
+                            ->label('level up to')
+                            ->options(CourseLevel::class),
+                    ])->columns(3),
+
             ]);
     }
 
@@ -66,32 +108,27 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('cover')
-                    ->searchable(),
+                    ->searchable()
+                    ->limit(15),
                 Tables\Columns\TextColumn::make('price')
                     ->money()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level')
-                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('level_up_from')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('level_up_to')
-                    ->numeric()
-                    ->sortable(),
+                    Tables\Columns\TextColumn::make('level_up')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('url')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('channel')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('number_of_pages')
+                    ->hidden()
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('duration')
+                    ->hidden()
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -132,5 +169,13 @@ class CourseResource extends Resource
             'view' => Pages\ViewCourse::route('/{record}'),
             'edit' => Pages\EditCourse::route('/{record}/edit'),
         ];
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        dd($data);
+        $data['user_id'] = auth()->id();
+
+        return $data;
     }
 }

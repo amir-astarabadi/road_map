@@ -4,6 +4,8 @@ namespace Modules\RoadMap\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
+use function Laravel\Prompts\select;
+
 enum CourseLevel: int implements HasLabel
 {
     case Low = 1;
@@ -28,5 +30,16 @@ enum CourseLevel: int implements HasLabel
     {
         return $this->name;
         
+    }
+
+    public static function get(string $name)
+    {
+        return match($name){
+            self::Low->name => self::Low->value, 
+            self::Medium->name => self::Medium->value, 
+            self::High->name => self::High->value, 
+            self::Advanced->name => self::Advanced->value, 
+            default => 1,
+        };
     }
 }
