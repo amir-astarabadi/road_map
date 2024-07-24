@@ -41,7 +41,7 @@ class CourseResource extends Resource
                         TextInput::make('price')
                             ->required()
                             ->numeric()
-                            ->prefix('$'),
+                            ->prefix('¢'),
                         Select::make('skills')
                             ->options(CourseCategory::class)
                             ->multiple(),
@@ -110,13 +110,14 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->limit(15),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
+                Tables\Columns\TextColumn::make('price_in_dolar')
+                    ->label('Price')
+                    ->numeric()
+                    ->prefix('$ ')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level')
                     ->sortable(),
-                    Tables\Columns\TextColumn::make('level_up')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('level_up'),
                 Tables\Columns\TextColumn::make('url')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')

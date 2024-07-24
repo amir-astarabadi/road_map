@@ -60,6 +60,11 @@ class Course extends Model
         );
     }
 
+    public function getPriceInDolarAttribute()
+    {
+        return  $this->price / 100;
+    }
+
 
     public function users()
     {

@@ -26,9 +26,6 @@ class CoursesImport implements ToModel
             return;
         }
 
-        //         dump($data);
-        //         $r = Course::create($data);
-        //   dd($r->toArray());
         return new Course($data);
     }
 
@@ -56,12 +53,12 @@ class CoursesImport implements ToModel
             return;
         }
 
-        if (($row[0] === 'Title' || $row[0] === 'itle') && $row[1] === 'Chanel') {
+        if (($row[0] === 'Title' || $row[0] === 'itle') && $row[1] === 'Channel') {
             static::$type = CourseType::Video->name;
             return;
         }
 
-        if (($row[0] === 'Title' || $row[0] === 'itle') && $row[8] === 'URL') {
+        if (($row[0] === 'Title' || $row[0] === 'itle') && $row[7] === 'Publication') {
             static::$type = CourseType::Article->name;
             return;
         }
@@ -69,7 +66,7 @@ class CoursesImport implements ToModel
 
     private function Book(array $row)
     {
-        if ($row[0] === 'Title' || $row[0] === 'itle') {
+        if ($row[0] === 'Title' || $row[0] === 'itle' || count($row) < 2) {
             return [];
         }
 
@@ -77,33 +74,35 @@ class CoursesImport implements ToModel
 
             $levelUp = explode('to', $row[5]);
             if (count($levelUp) < 2) {
-                dd($row);
+                return [];
             }
+
+            $data = [
+                'title' => $row[0],
+                'description' => $row[9],
+                'level' => CourseLevel::get($row[4]),
+                'instructors' => $row[1],
+                'level_up_from' => CourseLevel::get(trim($levelUp[0])),
+                'level_up_to' => CourseLevel::get(trim($levelUp[1])),
+                'url' => $row[14],
+                'price' => $row[12] * 100,
+                'skills' => null,
+                'channel' => null,
+                'number_of_pages' => $row[8],
+                'duration' => null,
+                'type' => CourseType::Book->value,
+                'cover' => null,
+            ];
         } catch (Exception $e) {
             dump($row);
             return [];
         }
-        return [
-            'title' => $row[0],
-            'description' => $row[9],
-            'level' => CourseLevel::get($row[4]),
-            'instructors' => $row[1],
-            'level_up_from' => CourseLevel::get(trim($levelUp[0])),
-            'level_up_to' => CourseLevel::get(trim($levelUp[1])),
-            'url' => $row[14],
-            'price' => $row[12] * 100,
-            'skills' => null,
-            'channel' => null,
-            'number_of_pages' => $row[8],
-            'duration' => null,
-            'type' => CourseType::Book->value,
-            'cover' => null,
-        ];
+        return $data;
     }
 
     private function Video(array $row)
     {
-        if (($row[0] === 'Title' || $row[0] === 'itle')) {
+        if (($row[0] === 'Title' || $row[0] === 'itle') || count($row) < 2) {
             return [];
         }
 
@@ -111,15 +110,21 @@ class CoursesImport implements ToModel
         if (count($levelUp) < 2) {
             dd($row);
         }
-        $duration = array_reverse(explode(':', $row[6]));
-        $d = 0;
-        $p = 1;
+//         $duration = array_reverse(explode(':', $row[6]));
+//         $d = 0;
+//         $p = 1;
+// dd($duration, $row, $row[6]);
+//         foreach ($duration as $item) {
+//             dd($item);
+//             $d += ($item * $p);
+//             $p *= 60;
+//         }
+        try{
 
-        foreach ($duration as $item) {
-            $d += ($item * $p);
-            $p *= 60;
+            $duration = (int)($row[6] * 100);
+        }catch(Exception $e){
+            $duration = 0;
         }
-
         return [
             'title' => $row[0],
             'description' => $row[7],
@@ -132,7 +137,7 @@ class CoursesImport implements ToModel
             'skills' => null,
             'channel' => $row[1],
             'number_of_pages' => 0,
-            'duration' => $d,
+            'duration' => $duration,
             'type' => CourseType::Video->value,
             'cover' => null,
         ];
@@ -140,11 +145,12 @@ class CoursesImport implements ToModel
 
     private function Article(array $row)
     {
-        if (($row[0] === 'Title' || $row[0] === 'itle')) {
+        if (($row[0] === 'Title' || $row[0] === 'itle') || count($row) < 2) {
             return [];
         }
-
+        
         $levelUp = explode('to', $row[5]);
+  
 
 
         return [

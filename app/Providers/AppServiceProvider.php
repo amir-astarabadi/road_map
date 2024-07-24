@@ -21,13 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        DB::listen(function ($q) {
-            if (str_contains($q->sql, "nsert")) {
-                Log::channel('daily')->info('query' , [
-                    'q' => $q->sql,
-                    'b' => $q->bindings,
-                ]);
-            }
-        });
+
     }
 }
