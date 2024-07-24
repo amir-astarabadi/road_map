@@ -10,12 +10,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Authentication\Database\Factories\UserFactory;
 use Modules\Authentication\Enums\Sex;
-use Filament\FilamentManager;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Modules\RoadMap\Models\Course;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasName, FilamentUser
