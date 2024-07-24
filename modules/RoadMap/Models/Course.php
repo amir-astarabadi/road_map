@@ -44,25 +44,28 @@ class Course extends Model
     }
 
 
-    public function skills():Attribute
+    public function skills(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => json_decode($value),
-            set: fn($value) => json_encode($value),
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
         );
     }
 
 
-    public function levelUp():Attribute
+    public function levelUp(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->level_up_from->name . " -> " .$this->level_up_to->name,
+            get: fn () => $this->level_up_from->name . " -> " . $this->level_up_to->name,
         );
     }
 
     public function getPriceInDolarAttribute()
     {
-        return  $this->price / 100;
+        if (($this->price) === 0) {
+            return "Free";
+        }
+        return  "$ " . $this->price / 100;
     }
 
 

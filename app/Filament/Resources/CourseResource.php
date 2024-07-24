@@ -113,7 +113,6 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('price_in_dolar')
                     ->label('Price')
                     ->numeric()
-                    ->prefix('$ ')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level')
                     ->sortable(),
@@ -174,7 +173,6 @@ class CourseResource extends Resource
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        dd($data);
         $data['user_id'] = auth()->id();
 
         return $data;
