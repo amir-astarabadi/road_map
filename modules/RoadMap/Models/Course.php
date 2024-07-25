@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\CourseFactory;
+use Modules\RoadMap\Enums\CourseCategory;
 use Modules\RoadMap\Enums\CourseLevel;
 use Modules\RoadMap\Enums\CourseType;
 
@@ -82,5 +83,38 @@ class Course extends Model
     public function attachToUser(User $user)
     {
         $this->users()->sync([$user->getKey()]);
+    }
+
+    public function getSkillsNameAttribute()
+    {
+        $values = [];
+
+        foreach ($this->skills ?? [] as $skill) {
+            $values[CourseCategory::getName($skill)] = $this->getLevelUpScore();
+        }
+        return $values;
+    }
+
+    public function move(array $result)
+    {
+        $courses = auth()->user()->courses ?? [];
+        $data = [];
+        foreach ($courses as $course) {
+            $data = array_merge($data, $course->skills_name);
+        }
+
+        foreach ($result as $key => $value) {
+
+            if (isset($data[$key])) {
+                dump($key, $data, $result);
+                $result[$key] += $data[$key];
+            }
+        }
+        return $result;
+    }
+
+    public function getLevelUpScore()
+    {
+        return ($this->level_up_to->value - $this->level_up_from->value) * 5;
     }
 }

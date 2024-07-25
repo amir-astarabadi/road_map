@@ -64,6 +64,7 @@ class ExamControllerTest extends TestCase
             $inputs['answershit'][] = ['question_id' => $q->getKey(), 'answer_id' => $q->answers->first()->getKey()];
         }
         $response = $this->actingAs($this->authUser)->putJson(route('exams.update', ['exam' => $exam->getKey()]), $inputs);
+        
         $response->assertJson(
             fn (AssertableJson $json) =>
             $json->has('data.category')

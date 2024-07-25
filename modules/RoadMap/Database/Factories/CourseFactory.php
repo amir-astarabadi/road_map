@@ -3,6 +3,8 @@
 namespace Modules\RoadMap\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\RoadMap\Enums\CourseCategory;
+use Modules\RoadMap\Enums\CourseType;
 use Modules\RoadMap\Models\Career;
 use Modules\RoadMap\Models\Course;
 
@@ -21,6 +23,10 @@ class CourseFactory extends Factory
     public function definition(): array
     {
         return [
+            'skills' => [
+                CourseCategory::values()[random_int(0, 3)],
+            ],
+            'type' => CourseType::Book->value,
             'title' => fake()->realText(random_int(10, 20)),
             'description' => fake()->realText(random_int(200, 300)),
             'level' => 3,
@@ -28,8 +34,6 @@ class CourseFactory extends Factory
             'level_up_to' => 2,
             'url' => 'https://www.youtube.com/watch?v=oTugjssqOT0',
             'price' => random_int(0, 100),
-            'courseable_type' => 'Modules\\RoadMap\\Models\\Career',
-            'courseable_id' => 1,
         ];
     }
 }

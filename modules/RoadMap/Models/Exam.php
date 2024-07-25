@@ -107,26 +107,58 @@ class Exam extends Model
             ->groupBy('category')
             ->groupBy('competency')
             ->get();
-            $totalScores = [];
-            foreach(QuestionCategory::cases() as $case)
-            {
-                $totalScores['category'][$case->name] = $result->where('category', $case->name)->sum('score');
-            }
+        $totalScores = [];
+        foreach (QuestionCategory::cases() as $case) {
+            $totalScores['category'][$case->name] = $result->where('category', $case->name)->sum('score');
+        }
 
-            foreach(QuestionCompetency::cases() as $case)
-            {
-                $totalScores['competency'][$case->name] = $result->where('competency', $case->value)->sum('score');
-            }
+        foreach (QuestionCompetency::cases() as $case) {
+            $totalScores['competency'][$case->name] = $result->where('competency', $case->value)->sum('score');
+        }
 
-            $this->update(['result' => $totalScores, 'finished_at' => now()]);
+        $this->update(['result' => $totalScores, 'finished_at' => now()]);
     }
 
     private function mapCategoryQuery()
     {
-        return "IF( category = " . QuestionCategory::PROBLEM_SOLVING->value . ", '" .QuestionCategory::PROBLEM_SOLVING->name . "', " .
-               "IF( category = " . QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS->value . ", '" .QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS->name . "' , " .
-               "IF( category = " . QuestionCategory::SELF_MANAGMENT->value . ", '" .QuestionCategory::SELF_MANAGMENT->name . "' , " .
-               "IF( category = " . QuestionCategory::AI_AND_TECH->value . ", '" .QuestionCategory::AI_AND_TECH->name . "' , NULL)))) as category";
+        return "IF( category = " . QuestionCategory::PROBLEM_SOLVING->value . ", '" . QuestionCategory::PROBLEM_SOLVING->name . "', " .
+            "IF( category = " . QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS->value . ", '" . QuestionCategory::LEADER_SHIP_AND_PEPPLE_SKILLS->name . "' , " .
+            "IF( category = " . QuestionCategory::SELF_MANAGMENT->value . ", '" . QuestionCategory::SELF_MANAGMENT->name . "' , " .
+            "IF( category = " . QuestionCategory::AI_AND_TECH->value . ", '" . QuestionCategory::AI_AND_TECH->name . "' , NULL)))) as category";
     }
 
+    public static function avg()
+    {
+        $avg = [
+            "PROBLEM_SOLVING" => 0,
+            "LEADER_SHIP_AND_PEPPLE_SKILLS" => 0,
+            "SELF_MANAGMENT" => 0,
+            "AI_AND_TECH" => 0
+        ];
+
+        $results = static::query()
+            ->whereNotNull('finished_at')
+            ->select('result')
+            ->get()
+            ->pluck('result.category')
+            ->toArray();
+
+        if (empty($results)) {
+            return $avg;
+        }
+
+        foreach ($results as $result) {
+            $avg['PROBLEM_SOLVING'] += $result->PROBLEM_SOLVING;
+            $avg['LEADER_SHIP_AND_PEPPLE_SKILLS'] += $result->LEADER_SHIP_AND_PEPPLE_SKILLS;
+            $avg['SELF_MANAGMENT'] += $result->SELF_MANAGMENT;
+            $avg['AI_AND_TECH'] += $result->AI_AND_TECH;
+        }
+
+        return [
+            "PROBLEM_SOLVING" => $avg['PROBLEM_SOLVING'] / count($results),
+            "LEADER_SHIP_AND_PEPPLE_SKILLS" => $avg['LEADER_SHIP_AND_PEPPLE_SKILLS'] / count($results),
+            "SELF_MANAGMENT" => $avg['SELF_MANAGMENT'] / count($results),
+            "AI_AND_TECH" => $avg['AI_AND_TECH'] / count($results),
+        ];
+    }
 }

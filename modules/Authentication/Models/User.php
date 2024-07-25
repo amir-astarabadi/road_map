@@ -14,6 +14,7 @@ use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Modules\RoadMap\Models\Course;
+use Modules\RoadMap\Models\Exam;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasName, FilamentUser
@@ -74,5 +75,36 @@ class User extends Authenticatable implements HasName, FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasRole('admin');
+    }
+
+    public function exams()
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    public function latestFinishedExam()
+    {
+        return $this->exams()->whereNotNull('finished_at')->latest()->first();
+    }
+
+    public function getResultAttribute()
+    {
+        $result = [
+            "PROBLEM_SOLVING" => 0,
+            "LEADER_SHIP_AND_PEPPLE_SKILLS" => 0,
+            "SELF_MANAGMENT" => 0,
+            "AI_AND_TECH" => 0
+        ];
+
+        $exam = $this->latestFinishedExam();
+
+        if (empty($exam)) return $result;
+
+        return [
+            "PROBLEM_SOLVING" => $exam->result->category->PROBLEM_SOLVING,
+            "LEADER_SHIP_AND_PEPPLE_SKILLS" => $exam->result->category->LEADER_SHIP_AND_PEPPLE_SKILLS,
+            "SELF_MANAGMENT" => $exam->result->category->SELF_MANAGMENT,
+            "AI_AND_TECH" => $exam->result->category->AI_AND_TECH
+        ];
     }
 }

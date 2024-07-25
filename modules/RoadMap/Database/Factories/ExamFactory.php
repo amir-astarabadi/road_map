@@ -23,7 +23,7 @@ class ExamFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'result' => [],
+            'result' =>  []
         ];
     }
 
@@ -31,6 +31,43 @@ class ExamFactory extends Factory
     {
         return $this->state([
             'user_id' => $user->getKey()
+        ]);
+    }
+
+    public function withResult()
+    {
+        return $this->state([
+            'finished_at' => now(),
+            'result' => [
+                "category" =>  [
+                    "PROBLEM_SOLVING" => 0,
+                    "LEADER_SHIP_AND_PEPPLE_SKILLS" => 0,
+                    "SELF_MANAGMENT" => 1,
+                    "AI_AND_TECH" => 3,
+                ],
+                "competency" =>  [
+                    "PROBLEM_SOLVING_ONE" => 0,
+                    "PROBLEM_SOLVING_TWO" => 0,
+                    "PROBLEM_SOLVING_THREE" => 0,
+                    "PROBLEM_SOLVING_FOUR" => 0,
+                    "PROBLEM_SOLVING_FIVE" => 0,
+                    "LEADER_SHIP_AND_PEPPLE_SKILLS_ONE" => 0,
+                    "LEADER_SHIP_AND_PEPPLE_SKILLS_TWO" => 0,
+                    "LEADER_SHIP_AND_PEPPLE_SKILLS_THREE" => 0,
+                    "LEADER_SHIP_AND_PEPPLE_SKILLS_FOUR" => 0,
+                    "LEADER_SHIP_AND_PEPPLE_SKILLS_FIVE" => 0,
+                    "SELF_MANAGMENT_ONE" => 0,
+                    "SELF_MANAGMENT_TWO" => 0,
+                    "SELF_MANAGMENT_THREE" => 0,
+                    "SELF_MANAGMENT_FOUR" => 1,
+                    "SELF_MANAGMENT_FIVE" => 0,
+                    "AI_AND_TECH_ONE" => 0,
+                    "AI_AND_TECH_TWO" => 0,
+                    "AI_AND_TECH_THREE" => 0,
+                    "AI_AND_TECH_FOUR" => 3,
+                    "AI_AND_TECH_FIVE" => 0,
+                ]
+            ],
         ]);
     }
 }

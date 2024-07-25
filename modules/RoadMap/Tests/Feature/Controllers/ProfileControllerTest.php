@@ -26,14 +26,13 @@ class ProfileControllerTest extends TestCase
         $this->authUser = User::factory()->create();
         Course::factory(2)->create();
         Course::first()->attachToUser($this->authUser);
+        
     }
 
     public function test_show_method()
-    {
-        
+    {        
         $response = $this->actingAs($this->authUser)->getJson(route('profile.show'));
 
-        dd($response->json());
         $this->assertTrue(true);
     }
 }

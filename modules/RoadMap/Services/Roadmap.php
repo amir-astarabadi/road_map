@@ -2,6 +2,7 @@
 
 namespace Modules\RoadMap\Services;
 
+use Illuminate\Http\Response;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Enums\CourseLength;
 use Modules\RoadMap\Enums\CourseLevel;
@@ -18,7 +19,11 @@ class Roadmap
 
     private static function getTargetExamForRoadmap(User $user)
     {
-        return Exam::whereBelongsTo($user)->first();
+        $exam = $user->firstFinishedExam();
+        if(is_null($exam)){
+            abort(Response::HTTP_FORBIDDEN, 'You have no finished exam.');
+        }
+        return $exam;
     }
 
     private static function suggest($result)
