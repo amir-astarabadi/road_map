@@ -17,13 +17,35 @@ class ProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $graphData = [
+            'avrage' => [
+                "PROBLEM_SOLVING" => 6,
+                "LEADER_SHIP_AND_PEPPLE_SKILLS" => 5,
+                "SELF_MANAGMENT" => 12,
+                "AI_AND_TECH" => 7
+            ],
+            'now' => [
+                "PROBLEM_SOLVING" => 1,
+                "LEADER_SHIP_AND_PEPPLE_SKILLS" => 3,
+                "SELF_MANAGMENT" => 8,
+                "AI_AND_TECH" => 3
+            ],
+            'future' => [
+                "PROBLEM_SOLVING" => 1 + 3,
+                "LEADER_SHIP_AND_PEPPLE_SKILLS" => 3 + 2,
+                "SELF_MANAGMENT" => 8 + 7,
+                "AI_AND_TECH" => 3 + 3
+            ],
+        ];
         $suggestions = [
+
             'user' => [
                 'id' => $this->resource->id,
                 "character" => 'problem solver',
                 'profile_iamge' => asset('storage/images/default_profile.png')
             ],
             "courses" => [],
+            "graph_data" => $graphData
         ];
         foreach (CourseLength::values() as $length) {
             $suggestions['courses'][$length] = [
