@@ -32,13 +32,13 @@ class Roadmap
                     static::fakeBook(),
                     static::fakeBook(),
                 ],
-                "onlien courses" => [
-                    static::fakeOnlienCourses(),
-                    static::fakeOnlienCourses(),
+                "online courses" => [
+                    static::fakeOnlineCourses(),
+                    static::fakeOnlineCourses(),
                 ],
                 "youtube videos" => [
-                    static::fakeOnlienCourses(),
-                    static::fakeOnlienCourses(),
+                    static::fakeOnlineCourses(),
+                    static::fakeOnlineCourses(),
                 ],
                 "articles" => [
                     static::fakeArticles(),
@@ -73,7 +73,7 @@ class Roadmap
         ];
     }
 
-    private static function fakeOnlienCourses()
+    private static function fakeOnlineCourses()
     {
 
         return [
