@@ -31,6 +31,7 @@ enum CourseCategory: int implements HasLabel
             self::LEADER_SHIP_AND_PEPPLE_SKILLS->value => self::LEADER_SHIP_AND_PEPPLE_SKILLS->name,
             self::SELF_MANAGMENT->value => self::SELF_MANAGMENT->name,
             self::AI_AND_TECH->value => self::AI_AND_TECH->name,
+            default => self::PROBLEM_SOLVING->name,
         };
     }
 
