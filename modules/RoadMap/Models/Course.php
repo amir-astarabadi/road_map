@@ -106,7 +106,6 @@ class Course extends Model
         foreach ($result as $key => $value) {
 
             if (isset($data[$key])) {
-                dump($key, $data, $result);
                 $result[$key] += $data[$key];
             }
         }
