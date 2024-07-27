@@ -7,6 +7,7 @@ use Modules\Authentication\Models\User;
 use Modules\RoadMap\Enums\CourseLength;
 use Modules\RoadMap\Enums\CourseLevel;
 use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Models\Course;
 use Modules\RoadMap\Models\Exam;
 
 class Roadmap
@@ -58,7 +59,7 @@ class Roadmap
     private static function fakeBook()
     {
         return [
-            "id" => random_int(1, 250),
+            "id" => Course::query()->inRandomOrder()->first()->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
@@ -82,7 +83,7 @@ class Roadmap
     {
 
         return [
-            "id" => random_int(1, 250),
+            "id" => Course::query()->inRandomOrder()->first()->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
@@ -101,7 +102,7 @@ class Roadmap
     private static function fakeYoutubeVideos()
     {
         return [
-            "id" => random_int(1, 250),
+            "id" => Course::query()->inRandomOrder()->first()->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
@@ -120,7 +121,7 @@ class Roadmap
     private static function fakeArticles()
     {
         return [
-            "id" => random_int(1, 250),
+            "id" => Course::query()->inRandomOrder()->first()->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
