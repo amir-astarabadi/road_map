@@ -19,7 +19,7 @@ class Roadmap
 
     private static function getTargetExamForRoadmap(User $user)
     {
-        $exam = $user->firstFinishedExam();
+        $exam = $user->latestFinishedExam();
         if(is_null($exam)){
             abort(Response::HTTP_FORBIDDEN, 'You have no finished exam.');
         }
