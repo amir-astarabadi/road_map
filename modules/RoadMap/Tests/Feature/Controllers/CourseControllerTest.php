@@ -37,7 +37,7 @@ class CourseControllerTest extends TestCase
         $this->assertDatabaseHas('course_user', ['user_id' => $this->authUser->getKey(), 'course_id' => $input['course_id']]);
     }
 
-    public function test_when_user_adding_new_course_do_not_delete_last_ones()
+    public function test_when_user_adding_duplicate_course_get_401()
     {
         Course::first()->users()->attach([$this->authUser->getKey()]);
         $input = [
@@ -45,9 +45,6 @@ class CourseControllerTest extends TestCase
         ];
 
         $response = $this->actingAs($this->authUser)->postJson(route('courses.store'), $input);
-        $response->assertStatus(Response::HTTP_OK);
-
-        $this->assertDatabaseHas('course_user', ['user_id' => $this->authUser->getKey(), 'course_id' => $input['course_id']]);
-        $this->assertDatabaseHas('course_user', ['user_id' => $this->authUser->getKey(), 'course_id' => Course::first()->getKey()]);
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

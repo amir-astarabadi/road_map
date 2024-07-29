@@ -15,7 +15,7 @@ class CourseCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->hasNotAddedThisCourse($this->course_id);
     }
 
     /**

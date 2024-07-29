@@ -97,7 +97,7 @@ class User extends Authenticatable implements HasName, FilamentUser
         ];
 
         $exam = $this->latestFinishedExam();
-
+        
         if (empty($exam)) return $result;
 
         return [
@@ -106,5 +106,10 @@ class User extends Authenticatable implements HasName, FilamentUser
             "SELF_MANAGMENT" => $exam->result->category->SELF_MANAGMENT,
             "AI_AND_TECH" => $exam->result->category->AI_AND_TECH
         ];
+    }
+
+    public function hasNotAddedThisCourse(int $courseId):bool
+    {
+        return ! $this->courses()->whereCourseId($courseId)->exists();
     }
 }
