@@ -21,7 +21,7 @@ class Roadmap
     private static function getTargetExamForRoadmap(User $user)
     {
         $exam = $user->latestFinishedExam();
-        if(is_null($exam)){
+        if (is_null($exam)) {
             abort(Response::HTTP_FORBIDDEN, 'You have no finished exam.');
         }
         return $exam;
@@ -30,10 +30,17 @@ class Roadmap
     private static function suggest($result)
     {
         // gather course base result
-        $suggestions = [];
+        $suggestions = [
+            'graph_data' => [
+                'avrage' => Exam::avg(),
+                'now' => $rightNowStatus = auth()->user()->result,
+                'future' => $rightNowStatus,
+            ]
+        ];
+
 
         foreach (CourseLength::values() as $length) {
-            $suggestions[$length] = [
+            $suggestions['courses'][$length] = [
                 "books" => [
                     static::fakeBook(),
                     static::fakeBook(),
@@ -59,7 +66,7 @@ class Roadmap
     private static function fakeBook()
     {
         return [
-            "id" => Course::query()->inRandomOrder()->first()->id,
+            "id" => Course::query()->inRandomOrder()->first()?->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
@@ -83,7 +90,7 @@ class Roadmap
     {
 
         return [
-            "id" => Course::query()->inRandomOrder()->first()->id,
+            "id" => Course::query()->inRandomOrder()->first()?->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
@@ -102,7 +109,7 @@ class Roadmap
     private static function fakeYoutubeVideos()
     {
         return [
-            "id" => Course::query()->inRandomOrder()->first()->id,
+            "id" => Course::query()->inRandomOrder()->first()?->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
@@ -121,7 +128,7 @@ class Roadmap
     private static function fakeArticles()
     {
         return [
-            "id" => Course::query()->inRandomOrder()->first()->id,
+            "id" => Course::query()->inRandomOrder()->first()?->id,
             "title" => fake()->words(random_int(3, 5), true),
             "description" => fake()->realText(random_int(500, 600)),
             "price" => random_int(0, 10),
