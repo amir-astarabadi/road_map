@@ -15,7 +15,7 @@ class Roadmap
     public static function make(User $user)
     {
         $exam = static::getTargetExamForRoadmap($user);
-        return static::suggest($exam->result);
+        return static::suggestBase($exam->result);
     }
 
     private static function getTargetExamForRoadmap(User $user)
@@ -27,7 +27,7 @@ class Roadmap
         return $exam;
     }
 
-    private static function suggest($result)
+    private static function suggestBase($result)
     {
         // gather course base result
         $suggestions = [

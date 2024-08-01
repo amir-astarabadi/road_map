@@ -27,6 +27,12 @@ return new class extends Migration
             $table->string('channel', 250)->nullable();
             $table->unsignedInteger('number_of_pages')->nullable();
             $table->unsignedBigInteger('duration')->nullable();
+            $table->string('length')->nullable();
+
+            $table->unsignedInteger('main_competency')->nullable();
+            $table->json('bonus_competencies')->nullable();
+            $table->string('language')->nullable();
+
             $table->timestamps();
         });
     }

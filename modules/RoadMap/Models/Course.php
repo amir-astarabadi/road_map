@@ -5,6 +5,8 @@ namespace Modules\RoadMap\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\CourseFactory;
 use Modules\RoadMap\Enums\CourseCategory;
@@ -28,8 +30,12 @@ class Course extends Model
         'channel',
         'number_of_pages',
         'duration',
+        'length',
         'type',
         'cover',
+        'main_competency',
+        'bonus_competencies',
+        'language',
     ];
 
     protected $casts = [
@@ -53,6 +59,31 @@ class Course extends Model
         );
     }
 
+
+    public function bonusCompetencies(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
+        );
+    }
+
+    public function mainCompetency() : HasOne
+    {
+        return $this->hasOne(Competency::class, 'id', 'main_competency');    
+    }
+
+    public function exteraCompetencies() : HasMany
+    {
+        return $this->hasMany(Competency::class, 'id', 'bonus_competencies');    
+    }
+
+    public function competencies()
+    {
+        $all = array_merge($this->bonus_competencies, [$this->main_competency]); 
+
+        return Competency::whereIn('id', $all)->get();    
+    }
 
     public function levelUp(): Attribute
     {

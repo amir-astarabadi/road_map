@@ -15,7 +15,7 @@ class ImportCoursesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'roadmap:import-courses-command';
+    protected $signature = 'app:import-courses';
 
     /**
      * The console command description.
@@ -29,23 +29,6 @@ class ImportCoursesCommand extends Command
      */
     public function handle()
     {
-
-        // Course::create([
-        //     "title" => "The Art of Problem Solving",
-        //     "description" => "Russell Ackoff",
-        //     "level" => 4,
-        //     "instructors" => "Explores various problem-solving methodologies and offers practical techniques for complex problems.",
-        //     "level_up_from" => 1,
-        //     "level_up_to" => 2,
-        //     "url" => "Amazon",
-        //     "price" => 4.4,
-        //     "skills" => null,
-        //     "channel" => null,
-        //     "number_of_pages" => 408.0,
-        //     "duration" => null,
-        //     "type" => 1,
-        //     "cover" => null,
-        // ]);
         Excel::import(new CoursesSheetsImport(), storage_path('/app/public/xlsx/courses.xlsx'));
     }
 }
