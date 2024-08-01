@@ -6,9 +6,8 @@ use Modules\RoadMap\Models\PersonalPreference;
 
 class PersonalPreferenceObserver
 {
-    public function updated(PersonalPreference $personalPreference)
+    public function updating(PersonalPreference $personalPreference)
     {
         $personalPreference->updateStatus();
-        $personalPreference->save();
     }
 }
