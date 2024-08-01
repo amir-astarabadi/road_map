@@ -3,11 +3,8 @@
 namespace Modules\RoadMap\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Modules\RoadMap\Enums\CourseFormat;
-use Modules\RoadMap\Enums\CourseLength;
-use Modules\RoadMap\Enums\CourseLocation;
 use Modules\RoadMap\Enums\Duration;
 use Modules\RoadMap\Enums\NeedDegree;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus as Status;
@@ -24,19 +21,12 @@ class PersonalPreferenceUpdateRequest extends FormRequest
         parent::__construct();
         $this->personalPreference = $this->route('personal_preference') ?? PersonalPreference::getOrMakeAnOngoing();
     }
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         $this->map();

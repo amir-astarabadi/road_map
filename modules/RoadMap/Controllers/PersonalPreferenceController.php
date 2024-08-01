@@ -25,6 +25,7 @@ class PersonalPreferenceController extends Controller
     public function store(PersonalPreferenceCreateRequest $request)
     {
         $personalPreference = PersonalPreference::startFor(auth()->user());
+        $personalPreference->update($request->validated());
 
         return PersonalPreferenceResource::make($personalPreference);
     }
