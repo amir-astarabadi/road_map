@@ -36,10 +36,12 @@ class Roadmap
         $personalPreference = $user->personalPreference->first();
         $userCourses = $user->courses->pluck('pivot.course_id')->toArray();
 
+        $budget = $personalPreference?->budget['max'] ?? 0;
+
         $courses = Course::query()
             ->whereNotIn('id', $userCourses)
-            ->where(function ($query) use ($personalPreference) {
-                $query->where('price', '<=', $personalPreference?->budget['max']  ?? 0);
+            ->where(function ($query) use ($budgete) {
+                $query->where('price', '<=', $budget * 100);
             })
             ->when($personalPreference?->duration, fn ($q) => $q->whereLength($personalPreference->duration))
             ->orderByRaw("FIELD(main_competency,$orderdCompetency)");

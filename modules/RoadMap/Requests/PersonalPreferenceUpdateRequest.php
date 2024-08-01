@@ -81,7 +81,7 @@ class PersonalPreferenceUpdateRequest extends FormRequest
     {
         $this->merge([
             'career_id' => $this->get('intrested_career', $this->personalPreference?->career_id),
-            'budget' => $this->get('budget_amount', $this->personalPreference?->budget) * 100,
+            'budget' => $this->get('budget_amount', $this->personalPreference?->budget),
             'work_experience' => $this->get('work_experience', $this->personalPreference?->work_experience),
             'course_format' => $this->get('course_format', $this->personalPreference?->course_format),
             'need_degree' => $this->get('need_degree', $this->personalPreference?->need_degree),
