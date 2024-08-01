@@ -26,18 +26,19 @@ class PersonalPreferenceCreateRequest extends FormRequest
     public function rules(): array
     {
         $this->map();
+
         return [
             'career_id' => [
                 'nullable',
                 'integer',
                 'exists:careers,id',
-                Rule::requiredIf($this->personalPreference->isOnStatus(Status::START->value))
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::START->value))
             ],
             'budget' => [
                 'nullable',
                 'array',
                 'size:2',
-                Rule::requiredIf($this->personalPreference->isOnStatus(Status::BUDGET->value))
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::BUDGET->value))
             ],
             'budget.min' => ['sometimes', 'integer', 'min:0', 'max:1000000'],
             'budget.max' => ['sometimes', 'integer', 'min:0', 'max:1000000'],
@@ -46,28 +47,28 @@ class PersonalPreferenceCreateRequest extends FormRequest
                 'nullable',
                 'integer',
                 'in:' . implode(',', WorkExperience::values()),
-                Rule::requiredIf($this->personalPreference->isOnStatus(Status::WORK_EXPERIENCE->value))
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::WORK_EXPERIENCE->value))
             ],
 
             'course_format' => [
                 'nullable',
                 'integer',
                 'in:' . implode(',', CourseFormat::values()),
-                Rule::requiredIf($this->personalPreference->isOnStatus(Status::COURSE_FORMAT->value))
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::COURSE_FORMAT->value))
             ],
 
             'need_degree' => [
                 'nullable',
                 'integer',
                 'in:' . implode(',', NeedDegree::values()),
-                Rule::requiredIf($this->personalPreference->isOnStatus(Status::DEGREE->value))
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::DEGREE->value))
             ],
 
             'duration' => [
                 'nullable',
                 'integer',
                 'in:' . implode(',', Duration::values()),
-                Rule::requiredIf($this->personalPreference->isOnStatus(Status::DURATION->value))
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::DURATION->value))
             ],
         ];
     }
@@ -75,12 +76,12 @@ class PersonalPreferenceCreateRequest extends FormRequest
     public function map()
     {
         $this->merge([
-            'career_id' => $this->get('intrested_career', $this->personalPreference->career_id),
-            'budget' => $this->get('budget_amount', $this->personalPreference->budget),
-            'work_experience' => $this->get('work_experience', $this->personalPreference->work_experience),
-            'course_format' => $this->get('course_format', $this->personalPreference->course_format),
-            'need_degree' => $this->get('need_degree', $this->personalPreference->need_degree),
-            'duration' => $this->get('duration', $this->personalPreference->duration),
+            'career_id' => $this->get('intrested_career', $this->personalPreference?->career_id),
+            'budget' => $this->get('budget_amount', $this->personalPreference?->budget),
+            'work_experience' => $this->get('work_experience', $this->personalPreference?->work_experience),
+            'course_format' => $this->get('course_format', $this->personalPreference?->course_format),
+            'need_degree' => $this->get('need_degree', $this->personalPreference?->need_degree),
+            'duration' => $this->get('duration', $this->personalPreference?->duration),
         ]);
     }
 }
