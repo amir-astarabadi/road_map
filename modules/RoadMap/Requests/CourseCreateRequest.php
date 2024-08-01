@@ -3,6 +3,7 @@
 namespace Modules\RoadMap\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Response;
 use Modules\RoadMap\Models\PersonalPreference;
 use Modules\RoadMap\Rules\ValidateAnswer;
 
@@ -15,7 +16,11 @@ class CourseCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->hasNotAddedThisCourse($this->course_id);
+        if (!auth()->user()->hasNotAddedThisCourse($this->course_id)) {
+            abort(Response::HTTP_FORBIDDEN, 'This course has been added to your profile.');
+        }
+        
+        return true;
     }
 
     /**
