@@ -125,7 +125,8 @@ class PersonalPreference extends Model
             '  filled($this->need_degree)',
             filled($this->need_degree),
             '  filled($this->duration)',
-            filled($this->duration)
+            filled($this->duration),
+            dd($this->toArray()),
         );
         if (
             filled($this->career_id) &&
