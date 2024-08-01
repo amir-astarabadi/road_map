@@ -15,11 +15,7 @@ class CourseCreateRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-    {
-        if (!auth()->user()->hasNotAddedThisCourse($this->course_id)) {
-            abort(Response::HTTP_FORBIDDEN, 'This course has been added to your profile.');
-        }
-        
+    {   
         return true;
     }
 
