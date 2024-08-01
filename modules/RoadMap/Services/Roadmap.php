@@ -40,7 +40,7 @@ class Roadmap
 
         $courses = Course::query()
             ->whereNotIn('id', $userCourses)
-            ->where(function ($query) use ($budgete) {
+            ->where(function ($query) use ($budget) {
                 $query->where('price', '<=', $budget * 100);
             })
             ->when($personalPreference?->duration, fn ($q) => $q->whereLength($personalPreference->duration))
