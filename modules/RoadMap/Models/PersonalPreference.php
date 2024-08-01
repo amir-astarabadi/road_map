@@ -113,6 +113,20 @@ class PersonalPreference extends Model
 
     public function updateStatus()
     {
+        dd(
+            '  filled($this->career_id)',
+            filled($this->career_id),
+            '  filled($this->budget)',
+            filled($this->budget),
+            '  filled($this->work_experience)',
+            filled($this->work_experience),
+            '  filled($this->course_format)',
+            filled($this->course_format),
+            '  filled($this->need_degree)',
+            filled($this->need_degree),
+            '  filled($this->duration)',
+            filled($this->duration)
+        );
         if (
             filled($this->career_id) &&
             filled($this->budget) &&
