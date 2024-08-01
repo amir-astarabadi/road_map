@@ -39,8 +39,8 @@ class PersonalPreferenceCreateRequest extends FormRequest
                 'size:2',
                 Rule::requiredIf($this->personalPreference->isOnStatus(Status::BUDGET->value))
             ],
-            'budget.min' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
-            'budget.max' => ['sometimes', 'integer', 'min:1', 'max:1000000'],
+            'budget.min' => ['sometimes', 'integer', 'min:0', 'max:1000000'],
+            'budget.max' => ['sometimes', 'integer', 'min:0', 'max:1000000'],
 
             'work_experience' => [
                 'nullable',
