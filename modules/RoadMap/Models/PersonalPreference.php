@@ -113,21 +113,7 @@ class PersonalPreference extends Model
 
     public function updateStatus()
     {
-        dd(
-            '  filled($this->career_id)',
-            filled($this->career_id),
-            '  filled($this->budget)',
-            filled($this->budget),
-            '  filled($this->work_experience)',
-            filled($this->work_experience),
-            '  filled($this->course_format)',
-            filled($this->course_format),
-            '  filled($this->need_degree)',
-            filled($this->need_degree),
-            '  filled($this->duration)',
-            filled($this->duration),
-            dd($this->toArray()),
-        );
+
         if (
             filled($this->career_id) &&
             filled($this->budget) &&
@@ -136,51 +122,52 @@ class PersonalPreference extends Model
             filled($this->need_degree) &&
             filled($this->duration)
         ) {
-            $this->status = PersonalPreferencesProcessStatus::FINISH;
+            $this->update(['status' => PersonalPreferencesProcessStatus::FINISH]);
             return;
         }
         if (filled($this->career_id)) {
             $this->status = PersonalPreferencesProcessStatus::BUDGET;
         } else {
-            $this->status = PersonalPreferencesProcessStatus::CAREER;
+            $this->update(['status' => PersonalPreferencesProcessStatus::CAREER]);
             return;
         }
 
         if (filled($this->budget)) {
             $this->status = PersonalPreferencesProcessStatus::WORK_EXPERIENCE;
         } else {
-            $this->status = PersonalPreferencesProcessStatus::BUDGET;
+            $this->update(['status' => PersonalPreferencesProcessStatus::BUDGET]);
             return;
         }
 
         if (filled($this->work_experience)) {
             $this->status = PersonalPreferencesProcessStatus::COURSE_FORMAT;
         } else {
-            $this->status = PersonalPreferencesProcessStatus::WORK_EXPERIENCE;
+            $this->update(['status' => PersonalPreferencesProcessStatus::WORK_EXPERIENCE]);
             return;
         }
+
         if (filled($this->course_format)) {
             $this->status = PersonalPreferencesProcessStatus::DEGREE;
         } else {
-            $this->status = PersonalPreferencesProcessStatus::COURSE_FORMAT;
+            $this->update(['status' => PersonalPreferencesProcessStatus::COURSE_FORMAT]);
             return;
         }
 
         if (filled($this->need_degree)) {
             $this->status = PersonalPreferencesProcessStatus::DURATION;
         } else {
-            $this->status = PersonalPreferencesProcessStatus::DEGREE;
+            $this->update(['status' => PersonalPreferencesProcessStatus::COURSE_FORMAT]);
             return;
         }
 
         if (filled($this->duration)) {
-            $this->status = PersonalPreferencesProcessStatus::FINISH;
+            $this->update(['status' => PersonalPreferencesProcessStatus::FINISH]);
             return;
         } else {
-            $this->status = PersonalPreferencesProcessStatus::DURATION;
+            $this->update(['status' => PersonalPreferencesProcessStatus::DURATION]);
             return;
         }
-
-        $this->status = PersonalPreferencesProcessStatus::DURATION;
+        
+        $this->update(['status' => PersonalPreferencesProcessStatus::DURATION]);
     }
 }
