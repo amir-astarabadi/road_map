@@ -6,7 +6,9 @@ use Illuminate\Http\Response;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Enums\CourseLength;
 use Modules\RoadMap\Enums\CourseLevel;
+use Modules\RoadMap\Enums\CourseType;
 use Modules\RoadMap\Enums\QuestionCategory;
+use Modules\RoadMap\Enums\QuestionCompetency;
 use Modules\RoadMap\Models\Course;
 use Modules\RoadMap\Models\Exam;
 
@@ -15,7 +17,7 @@ class Roadmap
     public static function make(User $user)
     {
         $exam = static::getTargetExamForRoadmap($user);
-        return static::suggestBase($exam->result);
+        return static::suggestBase($exam->result, $user);
     }
 
     private static function getTargetExamForRoadmap(User $user)
@@ -27,123 +29,125 @@ class Roadmap
         return $exam;
     }
 
-    private static function suggestBase($result)
+    private static function suggestBase($result, User $user)
     {
-        // gather course base result
+        $orderdCompetency = self::orderCompetency($result);
+
+        $personalPreference = $user->personalPreference->first();
+        $userCourses = $user->courses->pluck('pivot.course_id')->toArray();
+
+        $courses = Course::query()
+            ->whereNotIn('id', $userCourses)
+            ->where(function ($query) use ($personalPreference) {
+                $query->where('price', '<=', $personalPreference?->budget['max']  ?? 0);
+            })
+            ->when($personalPreference?->duration, fn ($q) => $q->whereLength($personalPreference->duration))
+            ->orderByRaw("FIELD(main_competency,$orderdCompetency)");
+
+
         $suggestions = [
             'graph_data' => [
                 'avrage' => Exam::avg(),
                 'now' => $rightNowStatus = auth()->user()->result,
                 'future' => $rightNowStatus,
-            ]
+            ],
+            'courses' => [],
         ];
 
 
         foreach (CourseLength::values() as $length) {
-            $suggestions['courses'][$length] = [
-                "books" => [
-                    static::fakeBook(),
-                    static::fakeBook(),
-                ],
-                "online courses" => [
-                    static::fakeOnlineCourses(),
-                    static::fakeOnlineCourses(),
-                ],
-                "youtube videos" => [
-                    static::fakeOnlineCourses(),
-                    static::fakeOnlineCourses(),
-                ],
-                "articles" => [
-                    static::fakeArticles(),
-                    static::fakeArticles(),
-                ],
-            ];
+            $base = clone $courses;
+            $base->whereLength($length);
+            $books = clone $base;
+            $videos = clone $base;
+            $articles = clone $base;
+
+            $books = static::makeBooks($books->where('type', '=', CourseType::Book->value)->get());
+            $videos = static::makeVideos($videos->where('type', '=', CourseType::Video->value)->get());
+            $articles = static::makeArticles($articles->where('type', '=', CourseType::Article->value)->get());
+
+            if ($books) $suggestions['courses'][$length]['books'] = $books;
+            if ($videos) $suggestions['courses'][$length]['online courses'] = $videos;
+            if ($articles) $suggestions['courses'][$length]['articles'] = $articles;
         }
 
         return $suggestions;
     }
 
-    private static function fakeBook()
+    private static function makeBooks($courses)
     {
-        return [
-            "id" => Course::query()->inRandomOrder()->first()?->id,
-            "title" => fake()->words(random_int(3, 5), true),
-            "description" => fake()->realText(random_int(500, 600)),
-            "price" => random_int(0, 10),
-            "picture" => asset('storage/images/temp.png'),
-            "authors" => array_filter([
-                fake()->firstName() . " " . fake()->lastName(),
-                random_int(0, 1) ? fake()->firstName() . " " . fake()->lastName() : null
-            ]),
-            "publisher" => "John Wiley Sons Inc",
-            "Language" => "English",
-            "number_of_pages" => random_int(110, 350),
-            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
-            "skills" => [
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-            ],
-        ];
+        $books = [];
+        foreach ($courses as $course) {
+            $books[] = [
+                "id" => $course->id,
+                "title" => $course->title,
+                "description" => $course->description,
+                "price" => $course->price,
+                "picture" => $course->image_url,
+                "authors" => $course->instructors,
+                "publisher" => $course->publisher,
+                "Language" => $course->language,
+                "number_of_pages" => $course->number_of_pages,
+                "level" => $course->level_name,
+                "skills" => $course->skills,
+                "url" => $course->url,
+            ];
+        }
+
+        return $books;
     }
 
-    private static function fakeOnlineCourses()
+    private static function makeVideos($courses)
     {
-
-        return [
-            "id" => Course::query()->inRandomOrder()->first()?->id,
-            "title" => fake()->words(random_int(3, 5), true),
-            "description" => fake()->realText(random_int(500, 600)),
-            "price" => random_int(0, 10),
-            "picture" => asset('storage/images/temp.png'),
-            "channel" => ['TEDx Talks', 'Mindvalley Talks', 'TED-Ed'][random_int(0, 2)],
-            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
-            "skills" => [
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-            ],
-            'url' => 'https://www.youtube.com/watch?v=R5d-hN9UtpU',
-            'duration' => random_int(1, 3600)
-        ];
+        $videos = [];
+        foreach ($courses as $course) {
+            $videos[] = [
+                "id" => $course->id,
+                "title" => $course->title,
+                "description" => $course->description,
+                "price" => $course->price,
+                "picture" => $course->image_url,
+                "channel" => $course->channel,
+                "level" => $course->level_name,
+                "skills" => $course->skills,
+                "url" => $course->url,
+                'duration' => $course->duration
+            ];
+        }
+        return $videos;
     }
 
-    private static function fakeYoutubeVideos()
+    private static function makeArticles($courses)
     {
-        return [
-            "id" => Course::query()->inRandomOrder()->first()?->id,
-            "title" => fake()->words(random_int(3, 5), true),
-            "description" => fake()->realText(random_int(500, 600)),
-            "price" => random_int(0, 10),
-            "picture" => asset('storage/images/temp.png'),
-            "channel" => ['TEDx Talks', 'Mindvalley Talks', 'TED-Ed'][random_int(0, 2)],
-            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
-            "skills" => [
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-            ],
-            'url' => 'https://www.youtube.com/watch?v=R5d-hN9UtpU',
-            'duration' => random_int(1, 3600)
-        ];
+        $articles = [];
+        foreach ($courses as $course) {
+            $articles[] = [
+                "id" => $course->id,
+                "title" => $course->title,
+                "description" => $course->description,
+                "price" => $course->price,
+                "picture" => $course->image_url,
+                "level" => $course->level_name,
+                "skills" => $course->skills,
+                "url" => $course->url,
+                "publisher" => $course->publisher,
+            ];
+        }
+        return $articles;
     }
 
-    private static function fakeArticles()
+    private static function orderCompetency($result)
     {
-        return [
-            "id" => Course::query()->inRandomOrder()->first()?->id,
-            "title" => fake()->words(random_int(3, 5), true),
-            "description" => fake()->realText(random_int(500, 600)),
-            "price" => random_int(0, 10),
-            "picture" => asset('storage/images/temp.png'),
-            "authors" => array_filter([
-                fake()->firstName() . " " . fake()->lastName(),
-                random_int(0, 1) ? fake()->firstName() . " " . fake()->lastName() : null
-            ]),
-            "publication" => "John Wiley Sons Inc",
-            "URL" => 'https://www.science.org/doi/abs/10.1126/science.1169588',
-            "level" => CourseLevel::cases()[random_int(0, count(CourseLevel::cases()) - 1)],
-            "skills" => [
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-                QuestionCategory::cases()[random_int(0, count(QuestionCategory::cases()) - 1)]->name,
-            ],
-        ];
+        $result = json_decode(json_encode($result), true)['competency'];
+
+        $r = [];
+
+        foreach ($result as $key => $value) {
+            $r[QuestionCompetency::get($key)] = $value;
+        }
+
+        asort($r);
+
+        return implode(',', array_filter(array_keys($r)));
     }
 }

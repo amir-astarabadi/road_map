@@ -5,7 +5,6 @@ namespace Modules\RoadMap\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\RoadMap\Enums\CourseCategory;
 use Modules\RoadMap\Enums\CourseType;
-use Modules\RoadMap\Models\Career;
 use Modules\RoadMap\Models\Course;
 
 /**

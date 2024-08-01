@@ -17,6 +17,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::apiResource('exams', ExamController::class)->only(['store', 'update']);
     Route::get('suggestions', [SuggestionContoller::class, 'show'])->name('suggestions.show');
     Route::get('profiles', [ProfileContoller::class, 'show'])->name('profile.show');
-    Route::get('pwd', PWDContoller::class)->name('profile.show');
+    Route::get('pwd', PWDContoller::class);
 });
 

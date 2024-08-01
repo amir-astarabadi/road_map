@@ -21,4 +21,15 @@ enum WorkExperience: int
             self::CAREER_CHNGER->value,
         ];
     }
+
+    public static function get(?int $value)
+    {
+        return match($value){
+            self::ZERO_TO_TWO->value => self::ZERO_TO_TWO,
+            self::TWO_TO_FIVE->value => self::TWO_TO_FIVE,
+            self::PLUSE_FIVE->value => self::PLUSE_FIVE,
+            self::CAREER_CHNGER->value => self::CAREER_CHNGER,
+            default => null
+        };
+    }
 }

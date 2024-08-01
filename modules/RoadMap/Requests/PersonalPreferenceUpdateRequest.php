@@ -29,6 +29,7 @@ class PersonalPreferenceUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        
         $this->map();
         return [
             'career_id' => [
@@ -79,12 +80,12 @@ class PersonalPreferenceUpdateRequest extends FormRequest
     public function map()
     {
         $this->merge([
-            'career_id' => $this->get('intrested_career', $this->personalPreference->career_id),
-            'budget' => $this->get('budget_amount', $this->personalPreference->budget),
-            'work_experience' => $this->get('work_experience', $this->personalPreference->work_experience),
-            'course_format' => $this->get('course_format', $this->personalPreference->course_format),
-            'need_degree' => $this->get('need_degree', $this->personalPreference->need_degree),
-            'duration' => $this->get('duration', $this->personalPreference->duration),
+            'career_id' => $this->get('intrested_career', $this->personalPreference?->career_id),
+            'budget' => $this->get('budget_amount', $this->personalPreference?->budget) * 100,
+            'work_experience' => $this->get('work_experience', $this->personalPreference?->work_experience),
+            'course_format' => $this->get('course_format', $this->personalPreference?->course_format),
+            'need_degree' => $this->get('need_degree', $this->personalPreference?->need_degree),
+            'duration' => $this->get('duration', $this->personalPreference?->duration),
         ]);
     }
 

@@ -52,6 +52,21 @@ class PersonalPreference extends Model
         );
     }
 
+    public function getWorkExperienceAttribute()
+    {
+        return WorkExperience::get($this->getRawOriginal('work_experience'));
+    }
+
+    public function getCourseFormatAttribute()
+    {
+        return CourseFormat::get($this->getRawOriginal('course_format'));
+    }
+
+    public function getDurationAttribute()
+    {
+        return CourseLength::get($this->getRawOriginal('duration'));
+    }
+
     public function industries(): Attribute
     {
         return Attribute::make(

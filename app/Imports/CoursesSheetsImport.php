@@ -22,7 +22,6 @@ class CoursesSheetsImport implements WithMultipleSheets
             new CoursesImport(CourseType::Article),
             new CoursesImport(CourseType::Article),
             new CoursesImport(CourseType::Article),
-
         ];
     }
 }

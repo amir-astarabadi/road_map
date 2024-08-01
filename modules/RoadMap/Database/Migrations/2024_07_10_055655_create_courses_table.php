@@ -32,6 +32,7 @@ return new class extends Migration
             $table->unsignedInteger('main_competency')->nullable();
             $table->json('bonus_competencies')->nullable();
             $table->string('language')->nullable();
+            $table->string('publisher')->nullable();
 
             $table->timestamps();
         });

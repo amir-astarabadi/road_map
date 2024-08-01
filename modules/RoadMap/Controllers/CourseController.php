@@ -24,7 +24,7 @@ class CourseController extends Controller
             'future' => $cours->move($rightNowStatus),
         ];
 
-        if (!auth()->user()->hasNotAddedThisCourse($request->get('course_id'))) {
+        if (auth()->user()->hasAddedThisCourse($request->get('course_id'))) {
             return response()->json([
                 'message' => 'This course has been added to your profile.',
                 'graph' => $graphData,

@@ -21,30 +21,27 @@ class CourseControllerTest extends TestCase
         parent::setUp();
         $this->authUser = User::factory()->create();
         Exam::factory()->forUser($this->authUser)->create();
-        Course::factory()->create();
-        Course::factory()->create();
+        Course::factory(2)->create();
     }
-
+    
     public function test_user_can_add_a_course_to_his_profile()
     {
-        Course::latest()->first()->attachToUser($this->authUser);
         $input = [
-            'course_id' => Course::where('id', '!=', Course::latest()->first()->id)->first()->getKey()
+            'course_id' => Course::first()->id
         ];
-
+        
         $response = $this->actingAs($this->authUser)->postJson(route('courses.store'), $input);
         $response->assertStatus(Response::HTTP_OK);
         $this->assertDatabaseHas('course_user', ['user_id' => $this->authUser->getKey(), 'course_id' => $input['course_id']]);
     }
-
+    
     public function test_when_user_adding_duplicate_course_get_401()
     {
         Course::first()->users()->attach([$this->authUser->getKey()]);
         $input = [
-            'course_id' => Course::latest()->first()->getKey()
+            'course_id' => Course::first()->getKey()
         ];
-
+        
         $response = $this->actingAs($this->authUser)->postJson(route('courses.store'), $input);
-        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

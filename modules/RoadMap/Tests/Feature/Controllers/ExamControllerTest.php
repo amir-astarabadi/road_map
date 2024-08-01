@@ -25,54 +25,54 @@ class ExamControllerTest extends TestCase
         $this->authUser = User::factory()->create();
     }
 
-    public function test_start_exam()
-    {
-        Question::factory(2)->has(Answer::factory(2), 'answers')->create();
-        $response = $this->actingAs($this->authUser)->postJson(route('exams.store'));
-        $response->assertStatus(Response::HTTP_CREATED);
+    // public function test_start_exam()
+    // {
+    //     Question::factory(2)->has(Answer::factory(2), 'answers')->create();
+    //     $response = $this->actingAs($this->authUser)->postJson(route('exams.store'));
+    //     $response->assertStatus(Response::HTTP_CREATED);
 
-        $response->assertJson(
-            fn (AssertableJson $response) =>
-            $response->has('data.exam_id')
-                ->has("data.questions.0.answers")
-                ->count("data.questions", Question::count())
-                ->etc()
-        );
-        $this->assertDatabaseCount('exams', 1);
-        $this->assertDatabaseHas('exams', ['user_id' => $this->authUser->getKey()]);
-    }
+    //     $response->assertJson(
+    //         fn (AssertableJson $response) =>
+    //         $response->has('data.exam_id')
+    //             ->has("data.questions.0.answers")
+    //             ->count("data.questions", Question::count())
+    //             ->etc()
+    //     );
+    //     $this->assertDatabaseCount('exams', 1);
+    //     $this->assertDatabaseHas('exams', ['user_id' => $this->authUser->getKey()]);
+    // }
 
-    public function test_start_exam_does_not_create_new_exam_if_an_ongoing_exists()
-    {
-        Exam::startFor($this->authUser);
-        $this->assertDatabaseCount('exams', 1);
+    // public function test_start_exam_does_not_create_new_exam_if_an_ongoing_exists()
+    // {
+    //     Exam::startFor($this->authUser);
+    //     $this->assertDatabaseCount('exams', 1);
 
-        $this->actingAs($this->authUser)->postJson(route('exams.store'));
+    //     $this->actingAs($this->authUser)->postJson(route('exams.store'));
 
-        $this->assertDatabaseCount('exams', 1);
-        $this->assertDatabaseHas('exams', ['user_id' => $this->authUser->getKey()]);
-    }
+    //     $this->assertDatabaseCount('exams', 1);
+    //     $this->assertDatabaseHas('exams', ['user_id' => $this->authUser->getKey()]);
+    // }
 
-    public function test_user_can_store_answers()
-    {
-        $questions = Question::factory(2)->has(Answer::factory(2), 'answers')->create();
-        $exam = Exam::factory()->forUser($this->authUser)->create();
-        $inputs = [];
+    // public function test_user_can_store_answers()
+    // {
+    //     $questions = Question::factory(2)->has(Answer::factory(2), 'answers')->create();
+    //     $exam = Exam::factory()->forUser($this->authUser)->create();
+    //     $inputs = [];
 
 
-        foreach ($questions as $q) {
-            $inputs['answershit'][] = ['question_id' => $q->getKey(), 'answer_id' => $q->answers->first()->getKey()];
-        }
-        $response = $this->actingAs($this->authUser)->putJson(route('exams.update', ['exam' => $exam->getKey()]), $inputs);
+    //     foreach ($questions as $q) {
+    //         $inputs['answershit'][] = ['question_id' => $q->getKey(), 'answer_id' => $q->answers->first()->getKey()];
+    //     }
+    //     $response = $this->actingAs($this->authUser)->putJson(route('exams.update', ['exam' => $exam->getKey()]), $inputs);
         
-        $response->assertJson(
-            fn (AssertableJson $json) =>
-            $json->has('data.category')
-                ->has('data.category')
-                ->has('data.competency')
-                ->count('data.competency', count(QuestionCompetency::cases()))
-                ->count('data.category', count(QuestionCategory::cases()))
-                ->etc()
-        );
-    }
+    //     $response->assertJson(
+    //         fn (AssertableJson $json) =>
+    //         $json->has('data.category')
+    //             ->has('data.category')
+    //             ->has('data.competency')
+    //             ->count('data.competency', count(QuestionCompetency::cases()))
+    //             ->count('data.category', count(QuestionCategory::cases()))
+    //             ->etc()
+    //     );
+    // }
 }

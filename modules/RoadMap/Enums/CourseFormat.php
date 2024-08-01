@@ -18,4 +18,14 @@ enum CourseFormat: int
             self::HYBRIDE->value,
         ];
     }
+
+    public static function get(?int $value)
+    {
+        return match($value){
+            self::ONLINE->value => self::ONLINE,
+            self::IN_PERSON->value => self::IN_PERSON,
+            self::HYBRIDE->value => self::HYBRIDE,
+            default => null
+        };
+    }
 }

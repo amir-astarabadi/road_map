@@ -80,6 +80,7 @@ class CoursesImport implements ToModel
                 'url' => $row[14],
                 'channel' => null,
                 'duration' => null,
+                'length' => CourseLength::SHORT_TERM,
                 'type' => $this->type,
                 'cover' => null,
             ];
@@ -143,6 +144,7 @@ class CoursesImport implements ToModel
             'channel' => null,
             'number_of_pages' => 0,
             'duration' => 0,
+            'length' => CourseLength::SHORT_TERM,
             'type' => $this->type,
             'cover' => null,
         ];

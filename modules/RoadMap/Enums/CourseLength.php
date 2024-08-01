@@ -15,4 +15,13 @@ enum CourseLength: string
             self::LONG_TERM,
         ];
     }
+
+
+    public static function get(?int $value)
+    {
+        return match ($value) {
+            Duration::LESS_THAN_3_MOUNTH->value => self::SHORT_TERM,
+            default => self::SHORT_TERM
+        };
+    }
 }

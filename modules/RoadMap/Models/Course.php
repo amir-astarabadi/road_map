@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 use Modules\Authentication\Models\User;
 use Modules\RoadMap\Database\Factories\CourseFactory;
 use Modules\RoadMap\Enums\CourseCategory;
@@ -36,6 +37,7 @@ class Course extends Model
         'main_competency',
         'bonus_competencies',
         'language',
+        'publisher',
     ];
 
     protected $casts = [
@@ -78,6 +80,12 @@ class Course extends Model
         return $this->hasMany(Competency::class, 'id', 'bonus_competencies');    
     }
 
+    public function getLevelNameAttribute()
+    {
+        
+        return CourseLevel::getName($this->getRawOriginal('level'));
+    }
+
     public function competencies()
     {
         $all = array_merge($this->bonus_competencies, [$this->main_competency]); 
@@ -100,6 +108,11 @@ class Course extends Model
         return  "$ " . $this->price / 100;
     }
 
+    public function getImageUrlAttribute()
+    {
+        $url = Storage::disk('courses')->url($this->image);
+        return  $url != config('app.url') . '/' ? $url : asset('storage/images/temp.png');
+    }
 
     public function users()
     {

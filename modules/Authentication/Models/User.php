@@ -115,8 +115,8 @@ class User extends Authenticatable implements HasName, FilamentUser
         return $this->hasMany(PersonalPreference::class)->whereStatus(PersonalPreferencesProcessStatus::FINISH)->latest()->limit(1);
     }
 
-    public function hasNotAddedThisCourse(int $courseId): bool
+    public function hasAddedThisCourse(int $courseId): bool
     {
-        return !$this->courses()->whereCourseId($courseId)->exists();
+        return $this->courses()->whereCourseId($courseId)->exists();
     }
 }

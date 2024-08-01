@@ -42,4 +42,15 @@ enum CourseLevel: int implements HasLabel
             default => 1,
         };
     }
+
+    public static function getName(?int $value)
+    {
+        return match($value){
+            self::Low->value => self::Low->name, 
+            self::Medium->value => self::Medium->name, 
+            self::High->value => self::High->name, 
+            self::Advanced->value => self::Advanced->name, 
+            default => self::Low->name,
+        };
+    }
 }
