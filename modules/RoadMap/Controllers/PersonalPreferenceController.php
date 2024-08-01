@@ -46,6 +46,8 @@ class PersonalPreferenceController extends Controller
     {
         $personalPreference = $request->getPersonalPreference();
         $personalPreference->update($request->validated());
+        $personalPreference->updateStatus();
+
         return PersonalPreferenceResource::make($personalPreference);
     }
 
