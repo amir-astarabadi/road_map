@@ -6,6 +6,7 @@ use Modules\RoadMap\Controllers\CourseController;
 use Modules\RoadMap\Controllers\ExamController;
 use Modules\RoadMap\Controllers\PersonalPreferenceController;
 use Modules\RoadMap\Controllers\ProfileContoller;
+use Modules\RoadMap\Controllers\PWDContoller;
 use Modules\RoadMap\Controllers\SuggestionContoller;
 
 Route::apiResource('careers', CareerController::class)->only(['index']);
@@ -16,5 +17,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::apiResource('exams', ExamController::class)->only(['store', 'update']);
     Route::get('suggestions', [SuggestionContoller::class, 'show'])->name('suggestions.show');
     Route::get('profiles', [ProfileContoller::class, 'show'])->name('profile.show');
+    Route::get('pwd', PWDContoller::class)->name('profile.show');
 });
 

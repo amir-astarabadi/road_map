@@ -13,8 +13,10 @@ use Modules\Authentication\Enums\Sex;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
 use Modules\RoadMap\Models\Course;
 use Modules\RoadMap\Models\Exam;
+use Modules\RoadMap\Models\PersonalPreference;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasName, FilamentUser
@@ -97,7 +99,7 @@ class User extends Authenticatable implements HasName, FilamentUser
         ];
 
         $exam = $this->latestFinishedExam();
-        
+
         if (empty($exam)) return $result;
 
         return [
@@ -108,8 +110,13 @@ class User extends Authenticatable implements HasName, FilamentUser
         ];
     }
 
-    public function hasNotAddedThisCourse(int $courseId):bool
+    public function personalPreference()
     {
-        return ! $this->courses()->whereCourseId($courseId)->exists();
+        return $this->hasMany(PersonalPreference::class)->whereStatus(PersonalPreferencesProcessStatus::FINISH)->latest()->limit(1);
+    }
+
+    public function hasNotAddedThisCourse(int $courseId): bool
+    {
+        return !$this->courses()->whereCourseId($courseId)->exists();
     }
 }
