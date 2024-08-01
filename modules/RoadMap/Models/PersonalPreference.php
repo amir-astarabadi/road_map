@@ -113,6 +113,17 @@ class PersonalPreference extends Model
 
     public function updateStatus()
     {
+        if (
+            filled($this->career_id) &&
+            filled($this->budget) &&
+            filled($this->work_experience) &&
+            filled($this->course_format) &&
+            filled($this->need_degree) &&
+            filled($this->duration)
+        ) {
+            $this->status = PersonalPreferencesProcessStatus::FINISH;
+            return;
+        }
         if (filled($this->career_id)) {
             $this->status = PersonalPreferencesProcessStatus::BUDGET;
         } else {
