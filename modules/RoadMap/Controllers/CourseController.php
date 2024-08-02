@@ -14,27 +14,28 @@ use Modules\RoadMap\Requests\CourseCreateRequest;
 class CourseController extends Controller
 {
     public function store(CourseCreateRequest $request)
-    {
-
-        $cours = Course::findOrFail($request->validated('course_id'));
-        $avg = Exam::avg();
-        $graphData = [
-            'avrage' => $avg,
-            'now' => $rightNowStatus = auth()->user()->result,
-            'future' => $cours->move($rightNowStatus),
-        ];
-
+    {   
         if (auth()->user()->hasAddedThisCourse($request->get('course_id'))) {
             return response()->json([
                 'message' => 'This course has been added to your profile.',
-                'graph' => $graphData,
+                'graph' => [
+                    'avrage' => Exam::avg(),
+                    'now' => auth()->user()->result,
+                    'future' => auth()->user()->future,
+                ],
             ], Response::HTTP_FORBIDDEN);
         }
+
+        $cours = Course::findOrFail($request->validated('course_id'));
         $cours->attachToUser(auth()->user());
 
         return response()->json([
             'message' => 'course added successfully.',
-            'graph' => $graphData,
+            'graph' => [
+                'avrage' => Exam::avg(),
+                'now' => auth()->user()->result,
+                'future' => auth()->user()->future,
+            ],
         ]);
     }
 }

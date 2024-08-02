@@ -91,7 +91,7 @@ class Roadmap
                 "Language" => $course->language,
                 "number_of_pages" => $course->number_of_pages,
                 "level" => $course->level_name,
-                "skills" => $course->skills,
+                "skills" => $course->only_skills_name,
                 "url" => $course->url,
             ];
         }
@@ -111,7 +111,7 @@ class Roadmap
                 "picture" => $course->image_url,
                 "channel" => $course->channel,
                 "level" => $course->level_name,
-                "skills" => $course->skills,
+                "skills" => $course->only_skills_name,
                 "url" => $course->url,
                 'duration' => $course->duration
             ];
@@ -130,7 +130,7 @@ class Roadmap
                 "price" => $course->price,
                 "picture" => $course->image_url,
                 "level" => $course->level_name,
-                "skills" => $course->skills,
+                "skills" => $course->only_skills_name,
                 "url" => $course->url,
                 "publisher" => $course->publisher,
             ];

@@ -13,6 +13,7 @@ use Modules\Authentication\Enums\Sex;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Modules\RoadMap\Enums\CourseCategory;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
 use Modules\RoadMap\Models\Course;
 use Modules\RoadMap\Models\Exam;
@@ -46,6 +47,8 @@ class User extends Authenticatable implements HasName, FilamentUser
         'password',
         'remember_token',
     ];
+
+    protected $with = ['courses', 'exams'];
 
     /**
      * The attributes that should be cast.
@@ -103,11 +106,28 @@ class User extends Authenticatable implements HasName, FilamentUser
         if (empty($exam)) return $result;
 
         return [
-            "PROBLEM_SOLVING" => $exam->result->category->PROBLEM_SOLVING,
-            "LEADER_SHIP_AND_PEPPLE_SKILLS" => $exam->result->category->LEADER_SHIP_AND_PEPPLE_SKILLS,
-            "SELF_MANAGMENT" => $exam->result->category->SELF_MANAGMENT,
-            "AI_AND_TECH" => $exam->result->category->AI_AND_TECH
+            "PROBLEM_SOLVING" => $exam->result?->category?->PROBLEM_SOLVING,
+            "LEADER_SHIP_AND_PEPPLE_SKILLS" => $exam->result?->category?->LEADER_SHIP_AND_PEPPLE_SKILLS,
+            "SELF_MANAGMENT" => $exam->result?->category?->SELF_MANAGMENT,
+            "AI_AND_TECH" => $exam->result?->category?->AI_AND_TECH
         ];
+    }
+
+    public function getFutureAttribute()
+    {
+        $rightNowStatus = $this->result;
+
+        foreach ($this->courses as $course) {
+            foreach ($course->skills ?? [] as $courseSkill) {
+                foreach ($rightNowStatus as $skill => $score) {
+                    if (CourseCategory::get($skill) === $courseSkill) {
+                        $rightNowStatus[$skill] = $score < $course->final_level ? $course->final_level : $score;
+                    }
+                }
+            }
+        }
+
+        return $rightNowStatus;
     }
 
     public function personalPreference()

@@ -35,8 +35,25 @@ enum CourseCategory: int implements HasLabel
         };
     }
 
+    public static function get($value)
+    {
+        return match ($value) {
+            self::PROBLEM_SOLVING->name => self::PROBLEM_SOLVING->value,
+            self::LEADER_SHIP_AND_PEPPLE_SKILLS->name => self::LEADER_SHIP_AND_PEPPLE_SKILLS->value,
+            self::SELF_MANAGMENT->name => self::SELF_MANAGMENT->value,
+            self::AI_AND_TECH->name => self::AI_AND_TECH->value,
+            default => self::PROBLEM_SOLVING->value,
+        };
+    }
+
     public function getLabel(): ?string
     {
         return $this->name;
+    }
+
+    public static function toHuman($string)
+    {
+        $string = strtolower(implode(' ', explode('_', $string)));
+        return ucwords($string);
     }
 }

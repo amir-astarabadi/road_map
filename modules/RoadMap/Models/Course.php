@@ -139,6 +139,16 @@ class Course extends Model
         return $values;
     }
 
+    public function getOnlySkillsNameAttribute()
+    {
+        $values = [];
+
+        foreach ($this->skills ?? [] as $skill) {
+            $values[] = CourseCategory::toHuman(CourseCategory::getName($skill));
+        }
+        return $values;
+    }
+
     public function move(array $result)
     {
         $courses = auth()->user()->courses ?? [];
@@ -159,5 +169,10 @@ class Course extends Model
     public function getLevelUpScore()
     {
         return ($this->level_up_to->value - $this->level_up_from->value) * 5;
+    }
+
+    public function getFinalLevelAttribute()
+    {
+        return $this->level_up_to->value  *  5;
     }
 }
