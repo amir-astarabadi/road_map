@@ -120,7 +120,7 @@ class User extends Authenticatable implements HasName, FilamentUser
         foreach ($this->courses as $course) {
             foreach ($course->skills ?? [] as $courseSkill) {
                 foreach ($rightNowStatus as $skill => $score) {
-                    if (CourseCategory::get($skill) === $courseSkill) {
+                    if (CourseCategory::get($skill) == $courseSkill) {
                         $rightNowStatus[$skill] = $score < $course->final_level ? $course->final_level : $score;
                     }
                 }
