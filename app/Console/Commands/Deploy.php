@@ -34,8 +34,10 @@ class Deploy extends Command
 
         $this->info('run CareerSeeder...');
         Artisan::call('db:seed', ['--class' => CareerSeeder::class]);
+
         $this->info('run QuestionSeeder...');
         Artisan::call('db:seed', ['--class' => QuestionSeeder::class]);
+
         $this->info('run RoleSeeder...');
         Artisan::call('db:seed', ['--class' => RoleSeeder::class]);
     }

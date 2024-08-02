@@ -193,4 +193,6 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+
+    'superadminpassword' => env("ADMIN_PASSWORD", null)
 ];
