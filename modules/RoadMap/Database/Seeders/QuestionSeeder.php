@@ -48,7 +48,7 @@ class QuestionSeeder extends Seeder
             [
                 "category" => QuestionCategory::PROBLEM_SOLVING,
                 "competency" => QuestionCompetency::PROBLEM_SOLVING_THREE,
-                "title" => "How do you handle situationswhen you encounter resistance toyour proposed solutions?",
+                "title" => "How do you handle situations when you encounter resistance to your proposed solutions?",
                 "answers" => [
                     3 => "I try to understand the reasons behind the resistance, provide data and examples to support my solution and I’m open to adjusting my proposal based on constructive feedback.",
                     2 => "I try to understand the reasons behind the
@@ -64,12 +64,12 @@ them why I chose the first solution.",
                 "competency" => QuestionCompetency::PROBLEM_SOLVING_FOUR,
                 "title" => "Which tools do you know and
 have used so far?
-(Brainstorming, Fishbone diagram,
+(Brainstorming, Fish bone diagram,
 Decision trees, SWOT analysis,
 MECE)",
                 "answers" => [
                     3 => "If they choose 4 or 5 items.",
-                    2 => "If they choose 3 or 2 items.",
+                    2 => "If they choose 2 or 3 items.",
                     1 => "If they choose less than 2 items.",
                 ]
             ],
