@@ -12,6 +12,8 @@ enum CourseType: int implements HasLabel
     
     case Article = 3;
 
+    case University = 4;
+
 
     public static function values(): array
     {
@@ -19,6 +21,7 @@ enum CourseType: int implements HasLabel
             self::Book->value,
             self::Video->value,
             self::Article->value,
+            self::University->value,
         ];
     }
 

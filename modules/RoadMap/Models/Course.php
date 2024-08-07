@@ -21,6 +21,7 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
+        'institute',
         'level',
         'instructors',
         'level_up_from',
@@ -70,27 +71,27 @@ class Course extends Model
         );
     }
 
-    public function mainCompetency() : HasOne
+    public function mainCompetency(): HasOne
     {
-        return $this->hasOne(Competency::class, 'id', 'main_competency');    
+        return $this->hasOne(Competency::class, 'id', 'main_competency');
     }
 
-    public function exteraCompetencies() : HasMany
+    public function exteraCompetencies(): HasMany
     {
-        return $this->hasMany(Competency::class, 'id', 'bonus_competencies');    
+        return $this->hasMany(Competency::class, 'id', 'bonus_competencies');
     }
 
     public function getLevelNameAttribute()
     {
-        
+
         return CourseLevel::getName($this->getRawOriginal('level'));
     }
 
     public function competencies()
     {
-        $all = array_merge($this->bonus_competencies, [$this->main_competency]); 
+        $all = array_merge($this->bonus_competencies, [$this->main_competency]);
 
-        return Competency::whereIn('id', $all)->get();    
+        return Competency::whereIn('id', $all)->get();
     }
 
     public function levelUp(): Attribute
