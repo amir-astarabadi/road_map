@@ -157,7 +157,7 @@ class User extends Authenticatable implements HasName, FilamentUser
             ->whereAiAndTech($examScores->AI_AND_TECH)
             ->whereSelfManagment($examScores->SELF_MANAGMENT)
             ->whereLeaderShipAndPeppleSkills($examScores->LEADER_SHIP_AND_PEPPLE_SKILLS)
-            ->first()?->title ??
-            '!!Un known!!';
+            ->first() ??
+            Character::default();
     }
 }

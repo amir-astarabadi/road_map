@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('problem_solving');
             $table->string('leader_ship_and_pepple_skills');
             $table->text('desc');
+            $table->text('statment');
             $table->timestamps();
         });
     }

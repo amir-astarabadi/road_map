@@ -31,7 +31,9 @@ class ProfileResource extends JsonResource
 
             'user' => [
                 'id' => $this->resource->id,
-                "character" => $this->resource->charechter,
+                "character" => $this->resource->charechter?->title,
+                "character_description" => $this->resource->charechter?->desc,
+                "character_statment" => $this->resource->charechter?->statment,
                 'profile_iamge' => asset('storage/images/default_profile.png')
             ],
             "courses" => [],

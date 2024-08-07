@@ -16,6 +16,7 @@ class Character extends Model
         "problem_solving",
         "leader_ship_and_pepple_skills",
         'desc',
+        'statment',
         'title',
     ];
 
@@ -34,5 +35,14 @@ class Character extends Model
     public function scopeWhereLeaderShipAndPeppleSkills(Builder $builder, ?string $value):Builder
     {
         return $builder->where('leader_ship_and_pepple_skills', $value);
+    }
+
+    public static function default()
+    {
+        $charachter = new self;
+
+        $charachter->title = 'un known';
+        $charachter->desc = 'you have so complicated charachter';
+        $charachter->statment = 'there is no statment';
     }
 }
