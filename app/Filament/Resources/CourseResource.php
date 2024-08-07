@@ -70,7 +70,7 @@ class CourseResource extends Resource
                                     ->maxLength(255),
                             ])->columns(2),
                         Section::make('Book Information')
-                            ->hidden(fn (callable $get) => $get('type') != CourseType::Book->value) 
+                            ->hidden(fn (callable $get) => $get('type') != CourseType::Book->value)
                             ->schema([
                                 TextInput::make('number_of_pages')
                                     ->label('number of pages')
@@ -79,12 +79,14 @@ class CourseResource extends Resource
                                     ->label('authors')->columnSpan(2),
                             ])->columns(3),
 
-                            Section::make('University Information')
+                        Section::make('University Information')
                             ->hidden(fn (callable $get) => $get('type') != CourseType::University->value)
                             ->schema([
                                 TextInput::make('institute')
                                     ->label('University')
                                     ->columnSpan(2),
+                                TextInput::make('instructors')
+                                    ->label('instructors')->columnSpan(1),
                             ])->columns(3),
                         Section::make('Atricle Information')
                             ->hidden(fn (callable $get) => $get('type') != CourseType::Article->value)
