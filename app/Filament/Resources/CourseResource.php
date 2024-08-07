@@ -84,16 +84,19 @@ class CourseResource extends Resource
                             ->schema([
                                 TextInput::make('institute')
                                     ->label('University')
-                                    ->columnSpan(2),
+                                    ->columnSpan(1),
                                 TextInput::make('instructors')
                                     ->label('instructors')->columnSpan(1),
+                                TextInput::make('url')
+                                    ->required()
+                                    ->maxLength(255),
                             ])->columns(3),
                         Section::make('Atricle Information')
                             ->hidden(fn (callable $get) => $get('type') != CourseType::Article->value)
                             ->schema([
                                 TextInput::make('url')
-                                    ->label('url')
-                                    ->numeric(),
+                                    ->required()
+                                    ->maxLength(255),
                             ])->columns(1)
                     ]),
 
