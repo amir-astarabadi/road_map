@@ -140,4 +140,24 @@ class User extends Authenticatable implements HasName, FilamentUser
     {
         return $this->courses()->whereCourseId($courseId)->exists();
     }
+
+    public function getCharechterAttribute()
+    {
+        $examScores = $this->latestFinishedExam()?->result->category;
+        foreach ($examScores as $skill => $score) {
+            if ($score <= 5) $score = 'low';
+            elseif ($score <= 10) $score = 'medium';
+            else $score = 'heigh';
+            $examScores->$skill = $score;
+        }
+
+
+        return Character::query()
+            ->whereProblemSolving($examScores->PROBLEM_SOLVING)
+            ->whereAiAndTech($examScores->AI_AND_TECH)
+            ->whereSelfManagment($examScores->SELF_MANAGMENT)
+            ->whereLeaderShipAndPeppleSkills($examScores->LEADER_SHIP_AND_PEPPLE_SKILLS)
+            ->first()?->title ??
+            '!!Un known!!';
+    }
 }

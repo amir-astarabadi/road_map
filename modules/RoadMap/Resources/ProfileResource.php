@@ -27,20 +27,11 @@ class ProfileResource extends JsonResource
             'future' => auth()->user()->future,
         ];
 
-        // $rightNowResult = ksort($rightNowResult);
-        $charachter = '';
-        $max = max($rightNowResult);
-        foreach($rightNowResult as $key => $value){
-            if($value === $max){
-                $charachter = $key;
-                break;
-            }
-        }
         $suggestions = [
 
             'user' => [
                 'id' => $this->resource->id,
-                "character" => CourseCategory::toHuman($charachter),
+                "character" => $this->resource->charechter,
                 'profile_iamge' => asset('storage/images/default_profile.png')
             ],
             "courses" => [],
