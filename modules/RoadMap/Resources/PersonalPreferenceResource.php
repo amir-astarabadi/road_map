@@ -23,6 +23,7 @@ class PersonalPreferenceResource extends JsonResource
             'course_format' => $this->resource->course_format,
             'need_degree' => $this->resource->need_degree,
             'duration' => $this->resource->duration,
+            'study_abroad' => $this->resource->study_abroad,
         ];
     }
 }
