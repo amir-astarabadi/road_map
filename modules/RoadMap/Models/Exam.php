@@ -155,10 +155,10 @@ class Exam extends Model
         }
 
         return [
-            "PROBLEM_SOLVING" => $avg['PROBLEM_SOLVING'] / count($results),
-            "LEADER_SHIP_AND_PEPPLE_SKILLS" => $avg['LEADER_SHIP_AND_PEPPLE_SKILLS'] / count($results),
-            "SELF_MANAGMENT" => $avg['SELF_MANAGMENT'] / count($results),
-            "AI_AND_TECH" => $avg['AI_AND_TECH'] / count($results),
+            "PROBLEM_SOLVING" => intval($avg['PROBLEM_SOLVING'] / count($results)),
+            "LEADER_SHIP_AND_PEPPLE_SKILLS" => intval($avg['LEADER_SHIP_AND_PEPPLE_SKILLS'] / count($results)),
+            "SELF_MANAGMENT" => intval($avg['SELF_MANAGMENT'] / count($results)),
+            "AI_AND_TECH" => intval($avg['AI_AND_TECH'] / count($results)),
         ];
     }
 }
