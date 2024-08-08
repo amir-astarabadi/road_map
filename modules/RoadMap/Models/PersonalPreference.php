@@ -70,6 +70,11 @@ class PersonalPreference extends Model
         return CourseLength::get($this->getRawOriginal('duration'));
     }
 
+    public function getStudyAbroadAttribute()
+    {
+        return StudyAbroad::get($this->getRawOriginal('study_abroad'));
+    }
+
     public function industries(): Attribute
     {
         return Attribute::make(

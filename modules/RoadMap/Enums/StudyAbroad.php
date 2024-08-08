@@ -19,4 +19,14 @@ enum StudyAbroad: int
             self::NOT_SURE->value,
         ];
     }
+
+    public static function get(?int $value)
+    {
+        return match ($value) {
+            self::YES->value => self::YES->name,
+            self::NO->value => self::NO->name,
+            self::NOT_SURE->value => self::NOT_SURE->name,
+            default => self::NOT_SURE->name
+        };
+    }
 }
