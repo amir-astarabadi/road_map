@@ -16,6 +16,8 @@ enum PersonalPreferencesProcessStatus :string
     
     case DEGREE = 'degree';
 
+    case STUDY_ABROAD = 'study_abroad';
+
     case DURATION = 'duration';
 
     case FINISH = 'finish';

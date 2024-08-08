@@ -9,6 +9,7 @@ use Modules\RoadMap\Enums\CourseFormat;
 use Modules\RoadMap\Enums\Duration;
 use Modules\RoadMap\Enums\NeedDegree;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus as Status;
+use Modules\RoadMap\Enums\StudyAbroad;
 use Modules\RoadMap\Enums\WorkExperience;
 use Modules\RoadMap\Models\PersonalPreference;
 
@@ -64,6 +65,13 @@ class PersonalPreferenceCreateRequest extends FormRequest
                 Rule::requiredIf($this->personalPreference?->isOnStatus(Status::DEGREE->value))
             ],
 
+            'study_abroad' => [
+                'nullable',
+                'integer',
+                'in:' . implode(',', StudyAbroad::values()),
+                Rule::requiredIf($this->personalPreference?->isOnStatus(Status::STUDY_ABROAD->value))
+            ],
+
             'duration' => [
                 'nullable',
                 'integer',
@@ -82,6 +90,7 @@ class PersonalPreferenceCreateRequest extends FormRequest
             'course_format' => $this->get('course_format', $this->personalPreference?->course_format),
             'need_degree' => $this->get('need_degree', $this->personalPreference?->need_degree),
             'duration' => $this->get('duration', $this->personalPreference?->duration),
+            'study_abroad' => $this->get('study_abroad', $this->personalPreference?->study_abroad),
         ]);
     }
 }

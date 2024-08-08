@@ -14,6 +14,7 @@ use Modules\RoadMap\Enums\CourseLocation;
 use Modules\RoadMap\Enums\Duration;
 use Modules\RoadMap\Enums\NeedDegree;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
+use Modules\RoadMap\Enums\StudyAbroad;
 use Modules\RoadMap\Enums\WorkExperience;
 
 class PersonalPreference extends Model
@@ -28,6 +29,7 @@ class PersonalPreference extends Model
         'course_format',
         'need_degree',
         'duration',
+        'study_abroad',
         'status',
     ];
 
@@ -35,6 +37,7 @@ class PersonalPreference extends Model
         'work_experience' => WorkExperience::class,
         'course_format' => CourseFormat::class,
         'need_degree' => NeedDegree::class,
+        'study_abroad' => StudyAbroad::class,
         'duration' => Duration::class,
         'status' => PersonalPreferencesProcessStatus::class,
     ];
@@ -120,11 +123,14 @@ class PersonalPreference extends Model
             filled($this->work_experience) &&
             filled($this->course_format) &&
             filled($this->need_degree) &&
-            filled($this->duration)
+            filled($this->duration) &&
+            filled($this->study_abroad)
         ) {
             $this->update(['status' => PersonalPreferencesProcessStatus::FINISH]);
             return;
         }
+
+
         if (filled($this->career_id)) {
             $this->status = PersonalPreferencesProcessStatus::BUDGET;
         } else {
@@ -154,9 +160,16 @@ class PersonalPreference extends Model
         }
 
         if (filled($this->need_degree)) {
+            $this->status = PersonalPreferencesProcessStatus::STUDY_ABROAD;
+        } else {
+            $this->update(['status' => PersonalPreferencesProcessStatus::DEGREE]);
+            return;
+        }
+
+        if (filled($this->study_abroad)) {
             $this->status = PersonalPreferencesProcessStatus::DURATION;
         } else {
-            $this->update(['status' => PersonalPreferencesProcessStatus::COURSE_FORMAT]);
+            $this->update(['status' => PersonalPreferencesProcessStatus::STUDY_ABROAD]);
             return;
         }
 
