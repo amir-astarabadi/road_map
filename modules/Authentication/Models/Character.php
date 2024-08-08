@@ -44,6 +44,8 @@ class Character extends Model
         $charachter->title = 'un known';
         $charachter->desc = 'you have so complicated charachter';
         $charachter->statment = 'there is no statment';
+
+        return $charachter;
     }
 
     public static function empty()
@@ -53,5 +55,7 @@ class Character extends Model
         $charachter->title = 'un known';
         $charachter->desc = 'character not set';
         $charachter->statment = 'character not set';
+
+        return $charachter;
     }
 }
