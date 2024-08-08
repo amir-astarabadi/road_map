@@ -13,6 +13,7 @@ use Modules\Authentication\Enums\Sex;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Http\Response;
 use Modules\RoadMap\Enums\CourseCategory;
 use Modules\RoadMap\Enums\PersonalPreferencesProcessStatus;
 use Modules\RoadMap\Models\Course;
@@ -144,6 +145,11 @@ class User extends Authenticatable implements HasName, FilamentUser
     public function getCharechterAttribute()
     {
         $examScores = $this->latestFinishedExam()?->result->category;
+
+        if (is_null($examScores)) {
+            return Character::empty();
+        }
+
         foreach ($examScores as $skill => $score) {
             if ($score <= 5) $score = 'low';
             elseif ($score <= 10) $score = 'medium';
@@ -158,6 +164,7 @@ class User extends Authenticatable implements HasName, FilamentUser
             ->whereSelfManagment($examScores->SELF_MANAGMENT)
             ->whereLeaderShipAndPeppleSkills($examScores->LEADER_SHIP_AND_PEPPLE_SKILLS)
             ->first() ??
+            
             Character::default();
     }
 }

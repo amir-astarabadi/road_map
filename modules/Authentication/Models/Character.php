@@ -45,4 +45,13 @@ class Character extends Model
         $charachter->desc = 'you have so complicated charachter';
         $charachter->statment = 'there is no statment';
     }
+
+    public static function empty()
+    {
+        $charachter = new self;
+
+        $charachter->title = 'un known';
+        $charachter->desc = 'character not set';
+        $charachter->statment = 'character not set';
+    }
 }
