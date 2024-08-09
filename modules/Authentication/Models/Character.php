@@ -39,7 +39,9 @@ class Character extends Model
 
     public function getImageUrlAttribute()
     {
-        return  Storage::disk('characters')->url($this->image);
+        $image = empty($this->image) ? 'default.svg' : $this->image;
+
+        return  Storage::disk('characters')->url($image);
     }
 
     public static function default()
