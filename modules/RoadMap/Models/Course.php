@@ -111,8 +111,9 @@ class Course extends Model
 
     public function getImageUrlAttribute()
     {
-        $url = Storage::disk('courses')->url($this->image);
-        return  $url != config('app.url') . '/' ? $url : asset('storage/images/temp.png');
+        $image = empty($this->cover) ? 'default.png' : $this->cover;
+
+        return  Storage::disk('courses')->url($image);
     }
 
     public function users()
