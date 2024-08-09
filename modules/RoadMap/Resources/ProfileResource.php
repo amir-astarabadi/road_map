@@ -20,7 +20,7 @@ class ProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $rightNowResult = auth()->user()->result; 
+        $rightNowResult = auth()->user()->result;
         $graphData = [
             'avrage' => Exam::avg(),
             'now' => auth()->user()->result,
@@ -33,8 +33,8 @@ class ProfileResource extends JsonResource
                 'id' => $this->resource->id,
                 "character" => $this->resource->charechter?->title,
                 "character_description" => $this->resource->charechter?->desc,
-                "character_statment" => $this->resource->charechter?->statment,
-                'profile_iamge' => asset('storage/images/default_profile.png')
+                "character_statement" => $this->resource->charechter?->statment,
+                'profile_image' => $this->resource->charechter?->image_url
             ],
             "courses" => [],
             "graph_data" => $graphData

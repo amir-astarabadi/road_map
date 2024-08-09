@@ -4,11 +4,10 @@ namespace Modules\Authentication\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Character extends Model
 {
-
-    protected $table = 'charachters';
 
     protected $fillable = [
         "ai_and_tech",
@@ -18,6 +17,7 @@ class Character extends Model
         'desc',
         'statment',
         'title',
+        'image',
     ];
 
     public function scopeWhereProblemSolving(Builder $builder, ?string $value):Builder
@@ -35,6 +35,11 @@ class Character extends Model
     public function scopeWhereLeaderShipAndPeppleSkills(Builder $builder, ?string $value):Builder
     {
         return $builder->where('leader_ship_and_pepple_skills', $value);
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return  Storage::disk('characters')->url($this->image);
     }
 
     public static function default()
