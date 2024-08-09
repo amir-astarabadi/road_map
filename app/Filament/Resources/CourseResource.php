@@ -49,6 +49,7 @@ class CourseResource extends Resource
                             ->required()
                             ->columnSpan(2),
                         FileUpload::make('cover')
+                            ->disk('courses')
                             ->label('cover image')
                             ->image(),
 
@@ -59,7 +60,7 @@ class CourseResource extends Resource
                             ->reactive()
                             ->options(CourseType::class),
                         Section::make('Video Information')
-                            ->hidden(fn (callable $get) => $get('type') != CourseType::Video->value)
+                            ->hidden(fn(callable $get) => $get('type') != CourseType::Video->value)
                             ->schema([
                                 TextInput::make('duration')
                                     ->numeric(),
@@ -70,7 +71,7 @@ class CourseResource extends Resource
                                     ->maxLength(255),
                             ])->columns(2),
                         Section::make('Book Information')
-                            ->hidden(fn (callable $get) => $get('type') != CourseType::Book->value)
+                            ->hidden(fn(callable $get) => $get('type') != CourseType::Book->value)
                             ->schema([
                                 TextInput::make('number_of_pages')
                                     ->label('number of pages')
@@ -80,7 +81,7 @@ class CourseResource extends Resource
                             ])->columns(3),
 
                         Section::make('University Information')
-                            ->hidden(fn (callable $get) => $get('type') != CourseType::University->value)
+                            ->hidden(fn(callable $get) => $get('type') != CourseType::University->value)
                             ->schema([
                                 TextInput::make('institute')
                                     ->label('University')
@@ -92,7 +93,7 @@ class CourseResource extends Resource
                                     ->maxLength(255),
                             ])->columns(3),
                         Section::make('Atricle Information')
-                            ->hidden(fn (callable $get) => $get('type') != CourseType::Article->value)
+                            ->hidden(fn(callable $get) => $get('type') != CourseType::Article->value)
                             ->schema([
                                 TextInput::make('url')
                                     ->required()
