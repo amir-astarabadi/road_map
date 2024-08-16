@@ -153,10 +153,9 @@ class User extends Authenticatable implements HasName, FilamentUser
         foreach ($examScores as $skill => $score) {
             if ($score <= 5) $score = 'low';
             elseif ($score <= 10) $score = 'medium';
-            else $score = 'heigh';
+            else $score = 'high';
             $examScores->$skill = $score;
         }
-
 
         return Character::query()
             ->whereProblemSolving($examScores->PROBLEM_SOLVING)
@@ -164,7 +163,6 @@ class User extends Authenticatable implements HasName, FilamentUser
             ->whereSelfManagment($examScores->SELF_MANAGMENT)
             ->whereLeaderShipAndPeppleSkills($examScores->LEADER_SHIP_AND_PEPPLE_SKILLS)
             ->first() ??
-            
-            Character::default();
+            Character::nearest($examScores);
     }
 }
