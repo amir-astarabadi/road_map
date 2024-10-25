@@ -1,3 +1,4 @@
+* sudo apt update && sudo apt upgrade 
 * sudo apt install php8.1-fpm php-mysql 
 * sudo apt install nginx
 * sudo apt install php-zip php-curl
